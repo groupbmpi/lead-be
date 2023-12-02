@@ -1,0 +1,52 @@
+const { Model, DataTypes } = require('sequelize');
+const db = require('../config/db');
+const Instance = require('./instance');
+const Sdg = require('./sustainable_development_goals');
+
+const InstanceSdg = db.define('InstanceSdg', {
+    instance_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: Instance,
+        key: 'instance_id'
+      }
+    },
+    sdg_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: Sdg,
+        key: 'sdg_id'
+      }
+    }
+  }, {
+    sequelize,
+    modelName: 'InstanceSdg',
+    tableName: 'instance_sdg',
+    underscored: true,
+    timestamps: false,
+    indexes: [
+      {
+        name: 'instance_id',
+        fields: ['instance_id']
+      },
+      {
+        name: 'sdg_id',
+        fields: ['sdg_id']
+      }
+    ],
+    engine: 'InnoDB',
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_0900_ai_ci'
+  });
+
+InstanceSdg.belongsTo(Instance, { foreignKey: 'instance_id' });
+InstanceSdg.belongsTo(Sdg, { foreignKey: 'sdg_id' });
+
+Instance.hasMany(InstanceSdg, { foreignKey: 'instance_id' });
+Sdg.hasMany(InstanceSdg, { foreignKey: 'sdg_id' });
+
+export default InstanceSdg;
