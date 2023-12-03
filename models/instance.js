@@ -1,7 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
 const db = require('../config/db');
-const Province = require('./province');
-const City = require('./city');
 
 const Instance = db.define('Instance', {
   instance_id: {
@@ -50,38 +48,6 @@ const Instance = db.define('Instance', {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  address_street: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  address_village: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  address_district: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  address_regency: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: City,
-      key: 'city_id'
-    }
-  },
-  address_province: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Province,
-      key: 'province_id'
-    }
-  },
-  address_postal_code: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
   url_company_profile: {
     type: DataTypes.STRING,
     allowNull: false
@@ -89,22 +55,6 @@ const Instance = db.define('Instance', {
   url_program_proposal: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  social_instagram: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  social_website: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  social_tiktok: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  social_youtube: {
-    type: DataTypes.STRING,
-    allowNull: true
   },
   status: {
     type: DataTypes.ENUM('Menunggu', 'Ditolak', 'Wawancara', 'Lolos'),
@@ -120,11 +70,5 @@ const Instance = db.define('Instance', {
   charset: 'utf8mb4',
   collate: 'utf8mb4_0900_ai_ci'
 });
-
-Instance.belongsTo(City, { foreignKey: 'address_regency' });
-Instance.belongsTo(Province, { foreignKey: 'address_province' });
-
-City.hasMany(Instance, { foreignKey: 'address_regency' });
-Province.hasMany(Instance, { foreignKey: 'address_province' });
 
 export default Instance;

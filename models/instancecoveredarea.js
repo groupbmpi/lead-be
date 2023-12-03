@@ -11,7 +11,7 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'instances',
+        model: Instance,
         key: 'instance_id'
       }
     },
@@ -20,7 +20,7 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'cities',
+        model: City,
         key: 'city_id'
       }
     }
@@ -28,13 +28,19 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',
     sequelize,
     modelName: 'InstanceCoveredArea',
     tableName: 'instance_covered_areas',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['instance_id', 'city_id']
+      }
+    ]
   });
 
-InstanceCoveredArea.belongsTo(Instance, { foreignKey: 'instance_id' });
-InstanceCoveredArea.belongsTo(City, { foreignKey: 'city_id' });
+InstanceCoveredArea.belongsTo(Instance, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+InstanceCoveredArea.belongsTo(City, { foreignKey: 'city_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Instance.hasMany(InstanceCoveredArea, { foreignKey: 'instance_id' });
-City.hasMany(InstanceCoveredArea, { foreignKey: 'city_id' });
+Instance.hasMany(InstanceCoveredArea, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+City.hasMany(InstanceCoveredArea, { foreignKey: 'city_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-  export default InstanceCoveredArea;
+export default InstanceCoveredArea;

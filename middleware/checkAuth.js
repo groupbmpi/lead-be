@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { errorResponse } = require('../utils/responseBuilder');
 
 const checkAuth = (req, res, next) => {
     try {
@@ -7,14 +8,17 @@ const checkAuth = (req, res, next) => {
         req.userData = decodedToken;
         next();
     } catch (error) {
-        res.status(401).json({ 
-            success: false,
-            error: {
-                code: 401,
-                message: 'Invalid or expired token!',
-            }
-        });
+        res.status(401).json(errorResponse(401, 'Invalid or expired token!'));
     }
 }
 
-module.exports = {checkAuth};
+const checkAuthRole = (role=['PARTICIPANT']) => {
+    return (req, res, next) => {
+        if(!role.includes(req.userData.role)) 
+            return res.status(403).json(errorResponse(403, 'Forbidden access'));
+        
+        next();
+    }
+}
+
+module.exports = {checkAuth, checkAuthRole};

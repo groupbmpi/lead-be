@@ -1,0 +1,11 @@
+
+const RoleType = {
+  ADMIN: ['ADMIN'],
+  SUPERADMIN: ['SUPERADMIN'],
+  MENTOR: ['MENTOR'],
+  PARTICIPANT: ['PARTICIPANT'],
+  ADMINS: ['ADMIN', 'SUPERADMIN'],
+  ALL: ['ADMIN', 'SUPERADMIN', 'MENTOR', 'PARTICIPANT'],
+};
+
+module.exports = RoleType;

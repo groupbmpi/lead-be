@@ -23,7 +23,7 @@ const InstanceSdg = db.define('InstanceSdg', {
       }
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'InstanceSdg',
     tableName: 'instance_sdg',
     underscored: true,
@@ -43,10 +43,10 @@ const InstanceSdg = db.define('InstanceSdg', {
     collate: 'utf8mb4_0900_ai_ci'
   });
 
-InstanceSdg.belongsTo(Instance, { foreignKey: 'instance_id' });
-InstanceSdg.belongsTo(Sdg, { foreignKey: 'sdg_id' });
+InstanceSdg.belongsTo(Instance, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+InstanceSdg.belongsTo(Sdg, { foreignKey: 'sdg_id', onUpdate: 'CASCADE', onDelete: 'CASCADE' });
 
-Instance.hasMany(InstanceSdg, { foreignKey: 'instance_id' });
-Sdg.hasMany(InstanceSdg, { foreignKey: 'sdg_id' });
+Instance.hasMany(InstanceSdg, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Sdg.hasMany(InstanceSdg, { foreignKey: 'sdg_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default InstanceSdg;

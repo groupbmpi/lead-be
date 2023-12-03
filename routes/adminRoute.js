@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const {checkAuth} = require('../middleware/checkauth');
+const {checkAuth, checkAuthRole} = require('../middleware/checkauth');
+const RoleType = require('../utils/roleType');
 
 const { 
     createAdmin, 
@@ -13,22 +14,22 @@ const {
 } = require('../controllers/adminController');
 
 // Create admin
-router.post('/api/admin', createAdmin);
+router.post('/api/v1/admin', checkAuth, checkAuthRole(RoleType.ADMINS), createAdmin);
 
 // Get all admins
-router.get('/api/admin', checkAuth, getAllAdmins);
+router.get('/api/v1/admin', checkAuth, checkAuthRole(RoleType.ADMINS), getAllAdmins);
 
 // Get admin by ID
-router.get('/api/admin/:id', checkAuth, getAdminById);
+router.get('/api/v1/admin/:id', checkAuth, checkAuthRole(RoleType.ADMINS), getAdminById);
 
 // Update admin
-router.put('/api/admin/:id', checkAuth, updateAdmin);
+router.put('/api/v1/admin/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), updateAdmin);
 
 // Delete admin
-router.delete('/api/admin/:id', checkAuth, deleteAdmin);
+router.delete('/api/v1/admin/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteAdmin);
 
 // Admin login
-router.post('/api/admin/login', loginAdmin);
+router.post('/api/v1/admin/login', loginAdmin);
 
 // Export the router
 module.exports = router;

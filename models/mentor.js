@@ -19,11 +19,6 @@ const Mentor = db.define('Mentor', {
       allowNull: false,
       validate: {
         isEmpty: false,
-        isPassword(value) {
-          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
-            throw new Error('Password must contain at least 8 characters, 1 uppercase, 1 lowercase, and 1 number');
-          }
-        }
       },
     },
     category: {

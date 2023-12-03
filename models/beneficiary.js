@@ -24,5 +24,4 @@ const Beneficiary = db.define('Beneficiary', {
   collate: 'utf8mb4_0900_ai_ci',
 });
 
-
 export default Beneficiary;

@@ -30,10 +30,10 @@ const ParticipantsMentors = db.define('ParticipantsMentors', {
     timestamps: false
   });
 
-ParticipantsMentors.belongsTo(Participant, { foreignKey: 'participant_id' });
-ParticipantsMentors.belongsTo(Mentor, { foreignKey: 'mentor_id' });
+ParticipantsMentors.belongsTo(Participant, { foreignKey: 'participant_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+ParticipantsMentors.belongsTo(Mentor, { foreignKey: 'mentor_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Participant.hasMany(ParticipantsMentors, { foreignKey: 'participant_id' });
-Mentor.hasMany(ParticipantsMentors, { foreignKey: 'mentor_id' });
+Participant.hasMany(ParticipantsMentors, { foreignKey: 'participant_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Mentor.hasMany(ParticipantsMentors, { foreignKey: 'mentor_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default ParticipantsMentors;

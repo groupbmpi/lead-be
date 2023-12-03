@@ -1,6 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 const db = require('../config/db');
 
+const Instance = require('./instance');
+
 const Participant = db.define('Participant', {
     participant_id: {
       type: DataTypes.INTEGER,
@@ -9,7 +11,11 @@ const Participant = db.define('Participant', {
     },
     instance_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: Instance,
+        key: 'instance_id'
+      }
     },
     participant_number: {
       type: DataTypes.ENUM('1', '2'),
@@ -58,14 +64,6 @@ const Participant = db.define('Participant', {
     password: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isEmpty: false,
-        isPassword(value) {
-          if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
-            throw new Error('Password must contain at least 8 characters, 1 uppercase, 1 lowercase, and 1 number');
-          }
-        }
-      },
     },
     joining_reason: {
       type: DataTypes.STRING,
@@ -103,4 +101,7 @@ const Participant = db.define('Participant', {
     underscored: true,
   });
 
-  export default Participant;
+Participant.belongsTo(Instance, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Instance.hasMany(Participant, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+export default Participant;

@@ -54,12 +54,12 @@ const TaskSubmission = db.define('TaskSubmission', {
     collate: 'utf8mb4_0900_ai_ci'
   });
 
-TaskSubmission.belongsTo(Mentor, { foreignKey: 'mentor_id' });
-TaskSubmission.belongsTo(Participant, { foreignKey: 'participant_id' });
-TaskSubmission.belongsTo(Task, { foreignKey: 'task_id' });
+TaskSubmission.belongsTo(Mentor, { foreignKey: 'mentor_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+TaskSubmission.belongsTo(Participant, { foreignKey: 'participant_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+TaskSubmission.belongsTo(Task, { foreignKey: 'task_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Mentor.hasMany(TaskSubmission, { foreignKey: 'mentor_id' });
-Participant.hasMany(TaskSubmission, { foreignKey: 'participant_id' });
-Task.hasMany(TaskSubmission, { foreignKey: 'task_id' });
+Mentor.hasMany(TaskSubmission, { foreignKey: 'mentor_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Participant.hasMany(TaskSubmission, { foreignKey: 'participant_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Task.hasMany(TaskSubmission, { foreignKey: 'task_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default TaskSubmission;
