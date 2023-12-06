@@ -12,8 +12,8 @@ adds crud to information-banner
 - text (TEXT) (NOT NULLABLE)
 
 ## Endpoint Details
-- /api/v1/informationBanner (POST) (ADMINS) - createInformationBanner
+- /api/v1/informationBanner (POST) (SUOERADMIN) - createInformationBanner
 - /api/v1/informationBanner (GET) (ALL) - getAllInformationBanners
 - /api/v1/informationBanner/:id (GET) (ALL) - getInformationBannerById
-- /api/v1/informationBanner/:id (PUT) (ADMINS) - updateInformationBanner
-- /api/v1/informationBanner/:id (DEL) (ADMINS) - deleteInformationBanner
+- /api/v1/informationBanner/:id (PUT) (SUPERADMIN) - updateInformationBanner
+- /api/v1/informationBanner/:id (DEL) (SUPERADMIN) - deleteInformationBanner
