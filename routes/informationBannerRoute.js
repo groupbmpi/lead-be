@@ -13,7 +13,7 @@ const {
 } = require('../controllers/informationBannerController');
 
 // Create
-router.post('/api/v1/informationBanner', checkAuth, checkAuthRole(RoleType.ADMINS), createInformationBanner);
+router.post('/api/v1/informationBanner', checkAuth, checkAuthRole(RoleType.SUPERADMIN), createInformationBanner);
 
 // Read (All)
 router.get('/api/v1/informationBanner', checkAuth, checkAuthRole(RoleType.ALL), getAllInformationBanners);
@@ -22,9 +22,9 @@ router.get('/api/v1/informationBanner', checkAuth, checkAuthRole(RoleType.ALL), 
 router.get('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.ALL), getInformationBannerById);
 
 // Update
-router.put('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.ADMINS), updateInformationBanner);
+router.put('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), updateInformationBanner);
 
 // Delete
-router.delete('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.ADMINS), deleteInformationBanner);
+router.delete('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteInformationBanner);
 
 module.exports = router;
