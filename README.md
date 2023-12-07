@@ -6,6 +6,8 @@ adds crud to information-banners
 - add routing for information-banner (./routes/informationBannerRoute.js)
 - add CRUD endpoint for information-banner model (./controllers/informationBannerController.js)
 - add endpoint to broadcast banner information to an email list (./controllers/informationBannerController.js)
+- add mailer utility for broadcast feature (./config/mailer.js)
+- modify .env -> add some new entries for mailer.js config (./.env)
 
 ## Model Detail
 - information_banner_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
