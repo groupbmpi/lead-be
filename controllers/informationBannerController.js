@@ -1,5 +1,6 @@
 
 const InformationBanner = require('../models/informationBanner');
+const transporter = require('../config/mailer');
 
 const createInformationBanner = async (req, res) => {
     try {
@@ -58,7 +59,6 @@ const updateInformationBanner = async (req, res) => {
     }
 }
 
-  // Delete
 const deleteInformationBanner = async (req, res) => {
     try {
         const banner = await InformationBanner.findByPk(req.params.id);
@@ -75,4 +75,44 @@ const deleteInformationBanner = async (req, res) => {
     }
 }
 
-module.exports = {createInformationBanner, getAllInformationBanners, getInformationBannerById, updateInformationBanner, deleteInformationBanner};
+const sendBannerContentById = async (req, res) => {
+    try {
+      const { recipientEmails } = req.body;
+      console.log(req.body);
+  
+      // Fetch the banner information
+      const banner = await InformationBanner.findByPk(req.params.id);
+  
+      if (!banner) {
+        return res.status(404).json({ message: 'Banner not found' });
+      }
+  
+      // Construct email content
+      const emailContent = `
+        INFORMATION BANNER:
+        URL Picture: ${banner.url_picture}
+        Text: ${banner.text}
+      `;
+  
+      // Send email
+      await transporter.sendMail({
+        to: recipientEmails.join(','),
+        subject: 'Information Banner',
+        text: emailContent,
+      });
+  
+      res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+module.exports = {
+    createInformationBanner, 
+    getAllInformationBanners, 
+    getInformationBannerById, 
+    updateInformationBanner, 
+    deleteInformationBanner,
+    sendBannerContentById
+};

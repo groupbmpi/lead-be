@@ -10,6 +10,7 @@ const {
     getInformationBannerById, 
     updateInformationBanner, 
     deleteInformationBanner, 
+    sendBannerContentById
 } = require('../controllers/informationBannerController');
 
 // Create
@@ -26,5 +27,8 @@ router.put('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.SU
 
 // Delete
 router.delete('/api/v1/informationBanner/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteInformationBanner);
+
+// Send Banner ID to emails
+router.post('/api/v1/informationBanner/send/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), sendBannerContentById);
 
 module.exports = router;
