@@ -23,7 +23,7 @@ const InformationBanner = db.define('InformationBanner', {
 }, {
   sequelize: db,
   modelName: 'InformationBanner',
-  tableName: 'information_banner', 
+  tableName: 'information_banners', 
   timestamps: false
 });
 
