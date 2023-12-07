@@ -19,3 +19,8 @@ adds crud to information-banner
 - /api/v1/informationBanner/:id (PUT) (SUPERADMIN) - updateInformationBanner
 - /api/v1/informationBanner/:id (DEL) (SUPERADMIN) - deleteInformationBanner
 - /api/v1/informationBanner/send/:id (POST) (SUPERADMIN) - sendBannerContentById
+
+## Special Notes
+- Buat `sendBannerContentById` harus ada email pengirim yang di define di `.env` dan `./config/mailer.js`. 
+- Untuk sekarang bisa pake akun gmail, akun gmailnya harus ada 2FA biar bisa generate app_password
+- app_password itu pass yang digunain buat authenticate ke email pengirim
