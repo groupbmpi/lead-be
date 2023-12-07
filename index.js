@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const adminRouter = require('./routes/adminRoute');
+const taskRouter = require('./routes/taskRoute');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(adminRouter);
+app.use(taskRouter);
 
 app.get('/', (req, res) => {
   res.send('Express Server');
