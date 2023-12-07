@@ -44,20 +44,29 @@ const getInformationBannerById = async (req, res) => {
 const updateInformationBanner = async (req, res) => {
     try {
         const { url_picture, text } = req.body;
-        const updatedBanner = await InformationBanner.update(
-            { url_picture, text },
-            { where: { id: req.params.id } }
-        );
-        if (updatedBanner[0] === 1) {
-            res.status(200).json({ message: 'Banner updated successfully' });
-        } else {
-            res.status(404).json({ message: 'Banner not found' });
+
+        console.log(req.params.id);
+        console.log(req.body);
+
+        // Find the information banner by its primary key (information_banner_id)
+        const banner = await InformationBanner.findByPk(req.params.id);
+
+        if (!banner) {
+            return res.status(404).json({ message: 'Information banner not found' });
         }
+
+        // Update the information banner with the new values
+        await banner.update({
+            url_picture,
+            text,
+        });
+
+        res.status(200).json({ message: 'Information banner updated successfully' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json(errorResponse(500, error.message));
+        console.error(error);
+        res.status(500).json(errorResponse(500, error.message));
     }
-}
+};
 
 const deleteInformationBanner = async (req, res) => {
     try {
