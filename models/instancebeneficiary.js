@@ -1,16 +1,19 @@
 
 const { DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
 const Beneficiary = require('./beneficiary');
 const Instance = require('./instance');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const InstanceBeneficiary = db.define('InstanceBeneficiary', {
     beneficiary_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        primaryKey: true,
         references: {
             model: Beneficiary,
-            key: 'beneficiary_id'
+            key: 'beneficiary_id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
@@ -18,6 +21,7 @@ const InstanceBeneficiary = db.define('InstanceBeneficiary', {
     instance_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        primaryKey: true,
         references: {
             model: Instance,
             key: 'instance_id'

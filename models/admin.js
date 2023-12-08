@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
-const { db } = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Admin = db.define('Admin', {
   admin_id: {
@@ -23,6 +25,12 @@ const Admin = db.define('Admin', {
     validate: {
       isEmail: true,
       notEmpty: true,
+      // 3.1.a Dibuat terbatas hanya untuk email domain @bcf.or.id 
+      isBCFEmail(value) {
+        if (!value.endsWith('@bcf.or.id')) {
+          throw new Error('Invalid email');
+        }
+      }, 
     },
   },
   password: {

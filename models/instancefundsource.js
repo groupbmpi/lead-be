@@ -1,10 +1,12 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
 
-import Instance from './instance';
-import FundSource from './fundsource';
+const Instance = require('./instance');
+const FundSource =  require('./fundsource');
 
-const InstanceCoveredArea = db.define('InstanceCoveredArea',{
+const db = Database.getInstance().getSequelizeInstance();
+
+const InstanceFundSource = db.define('InstanceFundSource',{
     instance_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -24,11 +26,11 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',{
       }
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'InstanceFundSource',
     tableName: 'instance_fund_sources',
-    underscored: true,
     timestamps: false,
+    underscored: true,
     indexes: [
       {
         name: 'instance_id',
@@ -44,10 +46,10 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',{
     collate: 'utf8mb4_0900_ai_ci'
   });
 
-InstanceCoveredArea.belongsTo(Instance, { foreignKey: 'instance_id' });
-InstanceCoveredArea.belongsTo(FundSource, { foreignKey: 'fund_source_id' });
+InstanceFundSource.belongsTo(Instance, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+InstanceFundSource.belongsTo(FundSource, { foreignKey: 'fund_source_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Instance.hasMany(InstanceCoveredArea, { foreignKey: 'instance_id' });
-FundSource.hasMany(InstanceCoveredArea, { foreignKey: 'fund_source_id' });
+Instance.hasMany(InstanceFundSource, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+FundSource.hasMany(InstanceFundSource, { foreignKey: 'fund_source_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default InstanceCoveredArea;
+module.exports = InstanceFundSource;

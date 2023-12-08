@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Beneficiary = db.define('Beneficiary', {
   beneficiary_id: {
@@ -24,4 +26,4 @@ const Beneficiary = db.define('Beneficiary', {
   collate: 'utf8mb4_0900_ai_ci',
 });
 
-export default Beneficiary;
+module.exports = Beneficiary;
