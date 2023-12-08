@@ -5,15 +5,15 @@ const {checkAuth, checkAuthRole} = require('../middleware/checkauth');
 const RoleType = require('../utils/roleType');
 
 const { 
-    createMentor,
+    addNew,
     getAllMentors,
     getMentorById,
     updateMentor,
-    deleteMentor,
-    login
+    deleteMentor
 } = require('../controllers/mentorController');
 
 // Create mentor
+router.post('/api/v1/mentor', checkAuth, checkAuthRole(RoleType.SUPERADMIN), addNew);
 
 // Get all mentors
 router.get('/api/v1/mentor', checkAuth, checkAuthRole(RoleType.ALL), getAllMentors);
@@ -26,12 +26,6 @@ router.put('/api/v1/mentor/:id', checkAuth, checkAuthRole([...RoleType.MENTOR, .
 
 // Delete mentor
 router.delete('/api/v1/mentor/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteMentor);
-
-// Mentor login
-router.post('/api/v1/mentor/login', login);
-
-// Mentor registration
-router.post('/api/v1/mentor', createMentor);
 
 // Export the router
 module.exports = router;

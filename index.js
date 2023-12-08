@@ -19,13 +19,23 @@ const { errorResponse } = require('./utils/responseBuilder');
 
 const db = Database.getInstance().getSequelizeInstance();
 
-
-dotenv.config();
+const informationBannerRouter = require('./routes/informationBannerRoute');
 
 const port = process.env.SERVER_PORT || 5000;
-
-
 const app = express();
+
+dotenv.config();
+db.authenticate()
+  .then(() => {
+    console.log('[server]: Connected to the database');
+    return db.sync(); // Synchronize models with the database
+  })
+  .then(() => {
+    console.log('[server]: Models synchronized with the database');
+  })
+  .catch((error) => {
+    console.error('[server]: Error connecting to the database:', error);
+  });
 
 app.use(cors(
   {
@@ -60,6 +70,9 @@ app.use(dashboardSummaryRouter);
 app.use((req, res, next) => {
   res.status(404).send(errorResponse('404 Not Found', 404));
 });
+
+app.use(informationBannerRouter);
+
 
 app.get('/', (req, res) => {
   res.send('Express Server');
