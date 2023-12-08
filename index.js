@@ -5,21 +5,21 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 const { authRouter,
-        adminRouter, 
-        mentorRouter, 
-        participantRouter, 
-        registrationRouter, 
-        cityRouter, 
+        adminRouter,
+        participantRouter,
+        registrationRouter,
+        mentorRouter,
+        taskRouter,
+        instanceRouter,
+        cityRouter,
         provinceRouter,
-        dashboardSummaryRouter,  
-        instanceRouter} = require('./routes/index');
+        dashboardSummaryRouter, 
+        informationBannerRouter } = require('./routes/index');
 
 const { Database } = require('./config/db');
 const { errorResponse } = require('./utils/responseBuilder');
 
 const db = Database.getInstance().getSequelizeInstance();
-
-const informationBannerRouter = require('./routes/informationBannerRoute');
 
 const port = process.env.SERVER_PORT || 5000;
 const app = express();
@@ -57,6 +57,8 @@ app.use(adminRouter);
 app.use(mentorRouter);
 app.use(participantRouter);
 
+app.use(taskRouter);
+
 app.use(registrationRouter);
 
 app.use(cityRouter);
@@ -65,6 +67,7 @@ app.use(provinceRouter);
 app.use(instanceRouter);
 
 app.use(dashboardSummaryRouter);
+app.use(informationBannerRouter);
 
 // Handle 404 Not Found
 app.use((req, res, next) => {

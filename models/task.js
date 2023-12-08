@@ -1,6 +1,8 @@
-const { Model, DataTypes } = require('sequelize');
-const { db } = require('../config/db');
+const { DataTypes } = require('sequelize');
+const { Database } = require('../config/db');
 const Mentor = require('./mentor');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Task = db.define('Task', {
   task_id: {

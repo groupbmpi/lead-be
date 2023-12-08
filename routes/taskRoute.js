@@ -10,7 +10,6 @@ const {
   getTaskById,
   updateTask,
   deleteTask,
-  sendTaskContentById,
 } = require('../controllers/taskController');
 
 // Create
