@@ -5,6 +5,7 @@ adds crud to tasks
 - add task model (./models/task.js)
 - add routing for task (./routes/taskRoute.js)
 - add CRUD endpoint for task model (./controllers/taskController.js)
+- sync coding style mismatch to current main version
 
 ## Model Detail
 - task_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
