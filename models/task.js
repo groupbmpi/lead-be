@@ -1,5 +1,8 @@
-const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { DataTypes } = require('sequelize');
+const { Database } = require('../config/db');
+const Mentor = require('./mentor');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Task = db.define('Task', {
     task_id: {
@@ -7,6 +10,18 @@ const Task = db.define('Task', {
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
+    },
+    mentor_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Mentor,
+        key: 'mentor_id'
+      }
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
@@ -17,11 +32,14 @@ const Task = db.define('Task', {
       allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'Task',
     tableName: 'tasks',
     underscored: true,
     timestamps: false
   });
 
-export default Task;
+Task.belongsTo(Mentor, { foreignKey: 'mentor_id' });
+Mentor.hasMany(Task, { foreignKey: 'mentor_id' });
+
+module.exports = Task;

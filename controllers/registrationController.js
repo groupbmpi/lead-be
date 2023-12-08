@@ -4,95 +4,104 @@ const InstanceCoveredArea = require('../models/instancecoveredarea');
 const Participant = require('../models/participant');
 const InstanceFundSource = require('../models/instancefundsource');
 const InstanceSDG = require('../models/instancesdg');
-const Address = require('../models/address');
-const SocialMedia = require('../models/socialmedia');
 const Beneficiary = require('../models/beneficiary');
 const InstanceBeneficiary = require('../models/instancebeneficiary');
+const FundSource = require('../models/fundsource');
 const Sdg = require('../models/sustainabledevelopmentgoal');
-const db = require('../config/db');
+const { Database } = require('../config/db');
 const { errorResponse, successResponse } = require('../utils/responseBuilder');
+const City = require('../models/city');
+const Province = require('../models/province');
+const { Op } = require('sequelize');
+const db = Database.getInstance().getSequelizeInstance();
 
-
+// 1.1 Calon peserta dapat mendaftarkan diri dengan mengisi pertanyaan yang diajukan tanpa harus signup/signin akun 
 const register = async (req, res) => {
     try {
         const result = await db.transaction(async (t) => {
             // variable for summary of registration process
             let instance;
-            const instance_covered_area = [];
-            const instanceBeneficiaries = []; // list of instance_beneficiary
-            const instanceFundSources = []; // list of instance_fund_source
-            const instanceSdg = []; // list of sdg
-            const instanceSocialMedia = []; // list of social media
-            let address; // instance address
+            let instance_covered_area = [];
+            let instanceBeneficiaries = []; // list of instance_beneficiary
+            let instanceFundSources = []; // list of instance_fund_source
+            let instanceSdg = []; // list of sdg
                         
          // Agency (instance) Profile
             // Get the instance information from the request body
-            const {
-                    type,
-                    name,
-                    email,
-                    sector,
-                    focus,
-                    established_month,
-                    established_year,
-                    area,
-                    total_beneficiaries,
-                    description,
-                    url_company_profile,
-                    url_program_proposal
-                  } = req.body;
+            const address_province = (await Province.findOne({ where: { name: req.body.address_province } })).province_id;
+            const address_regency = (await City.findOne({ where: { name: req.body.address_regency } })).city_id;
+
+            console.log(`address_province: ${address_province}\naddress_regency: ${address_regency}`);
+
+            const newInstanceData = {
+                type: req.body.type,
+                name: req.body.name,
+                email: req.body.email,
+                sector: req.body.sector,
+                focus: req.body.focus,
+                established_month: req.body.established_month,
+                established_year: req.body.established_year,
+                area: req.body.area,
+                total_beneficiaries: req.body.total_beneficiaries,
+                description: req.body.description,
+                address_street: req.body.address_street,
+                address_village: req.body.address_village,
+                address_district: req.body.address_district,
+                address_regency: address_regency,
+                address_province: address_province,
+                address_postal_code: req.body.address_postal_code,
+                url_company_profile: req.body.url_company_profile,
+                url_program_proposal: req.body.url_program_proposal,
+                social_instagram: req.body.social_instagram,
+                social_website: req.body.social_website,
+                social_tiktok: req.body.social_tiktok,
+                social_youtube: req.body.social_youtube,
+              };
 
             // Check if instance already exists
-            const existingInstance = await Instance.findOne({ where: { name: name, email: email } });
-            if (existingInstance) {
+            const existingInstance = await Instance.findOne({ where: { [Op.or]: [{ name: newInstanceData.name }, { email: newInstanceData.email }] } });
+            if (existingInstance)
                 instance = existingInstance;
-            } else {
-                instance = await Instance.create({
-                    type,
-                    name,
-                    email,
-                    sector,
-                    focus,
-                    established_month,
-                    established_year,
-                    area,
-                    total_beneficiaries,
-                    description,
-                    url_company_profile,
-                    url_program_proposal,
-                }, { transaction: t });
-            }
+            else
+                instance = await Instance.create(newInstanceData, { transaction: t })
 
          // Create instance covered area
             // Get the instance covered area information from the request body
-            const city_id = req.body.city_id;  // list of city_id ()
+            const cities = req.body.covered_area_list;  // list of city name ()
 
-            for (let i = 0; i < city_id.length; i++) {
-                const cityId = city_id[i];
+            for (let i = 0; i < cities.length; i++) {
+                const cityId = (await City.findOne({ where: { name: cities[i] } })).city_id;
+                const city = await City.findOne({ where: { city_id: cityId }, include: Province });
+
+                if (!city) {
+                    throw new Error(`City with city_id ${cityId} does not exist.`);
+                }
+
+                const provinceName = city.Province.name;
+
                 const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: cityId, instance_id: instance.instance_id } });
 
                 if (!existingInstanceCoveredArea) {
                     const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: cityId, instance_id: instance.instance_id }, { transaction: t });
-                    instance_covered_area.push(newInstanceCoveredArea);
-                } else {
-                    instance_covered_area.push(existingInstanceCoveredArea);
                 }
+
+                instance_covered_area.push({
+                    city: cities[i],
+                    province: provinceName
+                });
             }
-         
-         // ADD Instance Beneficiaries
-            // Create Beneficiaries if not exists
-            const beneficiaries = req.body.beneficiaries; // list of beneficiary target name
+
             const targetBeneficiariesId = [];
 
-            for (let i = 0; i < beneficiaries.length; i++) {
+            for (let i = 0; i < instanceBeneficiaries.length; i++) {
                 const beneficiaryName = beneficiaries[i];
                 const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
 
                 if (!existingBeneficiary) {
                     const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
-                    targetBeneficiariesId.push(newBeneficiary.id);
+                    targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
                 } else {
-                    targetBeneficiariesId.push(existingBeneficiary.id);
+                    targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
                 }
             }
 
@@ -103,62 +112,24 @@ const register = async (req, res) => {
 
                 if (!existingInstanceBeneficiary) {
                     const newInstanceBeneficiary = await InstanceBeneficiary.create({ beneficiary_id: beneficiaryId, instance_id: instance.instance_id }, { transaction: t });
-                    instanceBeneficiaries.push(newInstanceBeneficiary);
-                } else {
-                    instanceBeneficiaries.push(existingInstanceBeneficiary);
                 }
-            }
-
-         // ADD Agency/Instance Address
-            // Get the address information from the request body
-            const { address_province_id,
-                    address_city_id,
-                    address_district,
-                    address_village,
-                    address_street,
-                    address_postal_code } = req.body;
-
-            // Check if address already exists
-            const existingAddress = await Address.findOne({ where: 
-            {   instance_id: instance.instance_id,
-                address_province_id: address_province_id,
-                address_city_id: address_city_id,
-                address_district: address_district,
-                address_village: address_village,
-                address_street: address_street,
-                address_postal_code: address_postal_code
-            } });
-
-            address = existingAddress;
-
-            if (!existingAddress) {
-                const newAddress = await Address.create({
-                    instance_id: instance.instance_id,
-                    address_province_id: address_province_id,
-                    address_city_id: address_city_id,
-                    address_district: address_district,
-                    address_village: address_village,
-                    address_street: address_street,
-                    address_postal_code: address_postal_code
-                }, { transaction: t });
-                address = newAddress;
             }
 
 
          // ADD instance fund source
             // Create fund source if it doesn't exist
-            const fund_sources = req.body.fund_sources; // list of fund source name
+            instanceFundSources = req.body.fund_sources; // list of fund source name
             const targetFundSourcesId = [];
-
-            for (let i = 0; i < fund_sources.length; i++) {
-                const fundSourceName = fund_sources[i];
+            
+            for (let i = 0; i < instanceFundSources.length; i++) {
+                const fundSourceName = instanceFundSources[i];
                 const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
 
                 if (!existingFundSource) {
                     const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
-                    targetFundSourcesId.push(newFundSource.id);
+                    targetFundSourcesId.push(newFundSource.fund_source_id);
                 } else {
-                    targetFundSourcesId.push(existingFundSource.id);
+                    targetFundSourcesId.push(existingFundSource.fund_source_id);
                 }
             }
 
@@ -168,61 +139,30 @@ const register = async (req, res) => {
                 const existingInstanceFundSource = await InstanceFundSource.findOne({ where: { fund_source_id: fundSourceId, instance_id: instance.instance_id } });
 
                 if (!existingInstanceFundSource) {
-                    const newInstanceFundSource = await InstanceFundSource.create({ fund_source_id: fundSourceId, instance_id: instance.instance_id }, { transaction: t });
-                    instanceFundSources.push(newInstanceFundSource);
-                } else {
-                    instanceFundSources.push(existingInstanceFundSource);
+                    InstanceFundSource.create({ fund_source_id: fundSourceId, instance_id: instance.instance_id }, { transaction: t });
                 }
             }
 
          // ADD SDG to instance
             // Add instance SDG if it doesn't exist
-            const sdgsId = req.body.sdgsId; // list of sdg Id
+            const sdgsName = req.body.sdgs; // list of sdg name
+            instanceSdg = sdgsName;
 
-            for (let i = 0; i < sdgsId.length; i++) {
-                const sdgId = sdgsId[i];
-                const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdgId, instance_id: instance.instance_id } });
+            for (let i = 0; i < sdgsName.length; i++) {
+                const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
+                console.log(`sdg: ${sdg}`);
+                const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
 
                 if (!existingInstanceSDG) {
-                    const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdgId, instance_id: instance.instance_id }, { transaction: t });
-                    instanceSdg.push(newInstanceSDG);
-                } else {
-                    instanceSdg.push(existingInstanceSDG);
+                    const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdg.sdg_id, instance_id: instance.instance_id }, { transaction: t });
                 }
-            }
-
-         // 8. ADD Instance Social Media
-            // Create social media
-            const social_media_list = req.body.social_media; // list of social media
-
-            for(let i = 0; i < social_media_list.length; i++) {
-                const social_media = social_media_list[i];
-                const { platform, url } = social_media;
-
-                
-                const existingSocialMedia = await SocialMedia.findOne({ 
-                    where: { platform: platform,
-                             url: url,
-                             instance_id: instance.instance_id 
-                } });
-
-                if (!existingSocialMedia) {
-                    const newSocialMedia = await SocialMedia.create({
-                        platform,
-                        url,
-                        instance_id: instance.instance_id
-                    }, { transaction: t });
-                    instanceSocialMedia.push(newSocialMedia);
-                } else {
-                    instanceSocialMedia.push(existingSocialMedia);
-                }
-
             }
 
         // 5. ADD participants
             // Create participants
             let participants = [];
             participants = req.body.participants; // list of participant
+
 
             for (let i = 0; i < participants.length; i++) {
                 const participant = participants[i];
@@ -247,42 +187,60 @@ const register = async (req, res) => {
                         confirmation_3: participant.confirmation_3,
                         role: 'PARTICIPANT'
                     }, { transaction: t });
-
-                    participants.push(newParticipant);
-                } else {
-                    participants.push(existingParticipant);
                 }
-
-                // Return success response
-                return res.status(200).json(successResponse(200, 'Registration success', {
-                    instance_id: instance.instance_id,
-                    type: instance.type,
-                    name: instance.name,
-                    email: instance.email,
-                    sector: instance.sector,
-                    focus: instance.focus,
-                    established_month: instance.established_month,
-                    established_year: instance.established_year,
-                    area: instance.area,
-                    instance_eneficiaries: instanceBeneficiaries,
-                    total_beneficiaries: instance.total_beneficiaries,
-                    description: instance.description,
-                    url_company_profile: instance.url_company_profile,
-                    url_program_proposal: instance.url_program_proposal,
-                    status: instance.status,
-                    instance_covered_area: instance_covered_area,
-                    instance_fund_sources: instanceFundSources,
-                    instance_sdg: instanceSdg,
-                    instance_social_media: instanceSocialMedia,
-                    address: address,
-                    participants: participants
-                }));
             }
+
+            // Return success response
+            return res.status(200).json(successResponse(200, `Hasil copy pendaftaran anda telah dikirim ke ${instance.email} 
+            Status pendaftaran dapat dilihat di Home > Seleksi.`, {
+                instance_id: instance.instance_id,
+                name: instance.name,
+                email: instance.email,
+                sector: instance.sector,
+                focus: instance.focus,
+                established_month: instance.established_month,
+                established_year: instance.established_year,
+                area: instance.area,
+                total_beneficiaries: instance.total_beneficiaries,
+                description: instance.description,
+                address_street: instance.address_street,
+                address_village: instance.address_village,
+                address_district: instance.address_district,
+                address_regency: instance.address_regency,
+                address_province: instance.address_province,
+                address_postal_code: instance.address_postal_code,
+                url_company_profile: instance.url_company_profile,
+                url_program_proposal: instance.url_program_proposal,
+                social_instagram: instance.social_instagram,
+                social_website: instance.social_website,
+                social_tiktok: instance.social_tiktok,
+                social_youtube: instance.social_youtube,
+                instance_covered_area: instance_covered_area,
+                instance_beneficiaries: instanceBeneficiaries,
+                instance_fund_sources: instanceFundSources,
+                instance_sdg: instanceSdg,
+                instance_participants: participants.map((participant) => ({
+                    participant_number: participant.participant_number,
+                    name: participant.name,
+                    position: participant.position,
+                    latest_education: participant.latest_education,
+                    education_background: participant.education_background,
+                    focus: participant.focus,
+                    whatsapp_number: participant.whatsapp_number,
+                    email: participant.email,
+                    joining_reason: participant.joining_reason,
+                    url_id_card: participant.url_id_card,
+                    url_cv: participant.url_cv,
+                    confirmation_1: participant.confirmation_1,
+                    confirmation_2: participant.confirmation_2,
+                    confirmation_3: participant.confirmation_3,
+                })),
+            }));
         });
 
     } catch (error) {
         // Return error response
-        return res.status(500).json({ message: 'Registration failed', error: error.message });
+        return res.status(500).json(errorResponse(500, `Internal server error. \nDetail: ${error.message}. ${error.stack}`));
     }
 };
 
