@@ -6,6 +6,12 @@ const { successResponse, errorResponse } = require('../utils/responseBuilder');
 const createAdmin = async (req, res) => {
     try {
         const { name, email, password } = req.body;
+
+        // 3.1.a Dibuat terbatas hanya untuk email domain @bcf.or.id
+        if (!email.endsWith('@bcf.or.id')) {
+            return res.status(401).json(errorResponse(401, 'Invalid email'));
+        } 
+
         const existingAdmin = await Admin.findOne({ where: { email } });
         if (existingAdmin) {
             res.status(409).json(errorResponse(409, 'Admin already exists'));
@@ -65,7 +71,7 @@ const getAdminById = async (req, res) => {
 
 const updateAdmin = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const adminData = req.body;
         const admin = await Admin.findByPk(req.params.id);
 
         if(!admin) res.status(404).json(errorResponse(404, 'Admin not found'));
@@ -74,10 +80,8 @@ const updateAdmin = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         await admin.update({
-            name,
-            email,
-            password: hashedPassword,
-            role,
+            ...adminData,
+            password: hashedPassword || admin.password
         });
 
         res.status(200).json(successResponse(200, 'Admin updated', {
@@ -106,29 +110,5 @@ const deleteAdmin = async (req, res) => {
     }
 }
 
-const loginAdmin = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const admin = await Admin.findOne({ where: { email } });
 
-        if (!admin) return res.status(404).json(errorResponse(404, 'Admin not found'));
-        
-        const validPassword = await bcrypt.compare(password, admin.password);
-        if (!validPassword) return res.status(401).json(errorResponse(401, 'Wrong password'));
-        
-        const token = jwt.sign({ id: admin.admin_id }, process.env.JWT_SECRET);
-        res.status(200).json(successResponse(200, 'Login success', {
-            token,
-            user: {
-                id: admin.admin_id,
-                name: admin.name,
-                email: admin.email,
-                role: admin.role,
-            },
-        }));
-    } catch (error) {
-        res.status(500).json(errorResponse(500, error.message));
-    }
-}
-
-module.exports = { createAdmin, getAllAdmins, getAdminById, updateAdmin, deleteAdmin, loginAdmin };
+module.exports = { createAdmin, getAllAdmins, getAdminById, updateAdmin, deleteAdmin };
