@@ -10,11 +10,11 @@ const {
     getAdminById, 
     updateAdmin, 
     deleteAdmin, 
-    loginAdmin 
 } = require('../controllers/adminController');
 
 // Create admin
-router.post('/api/v1/admin', checkAuth, checkAuthRole(RoleType.ADMINS), createAdmin);
+router.post('/api/v1/admin', checkAuth, checkAuthRole(RoleType.SUPERADMIN), createAdmin);
+// router.post('/api/v1/admin', createAdmin);
 
 // Get all admins
 router.get('/api/v1/admin', checkAuth, checkAuthRole(RoleType.ADMINS), getAllAdmins);
@@ -29,7 +29,7 @@ router.put('/api/v1/admin/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), u
 router.delete('/api/v1/admin/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteAdmin);
 
 // Admin login
-router.post('/api/v1/admin/login', loginAdmin);
+// router.post('/api/v1/admin/login', loginAdmin);
 
 // Export the router
 module.exports = router;
