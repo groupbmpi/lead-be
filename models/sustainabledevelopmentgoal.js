@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 
 const SustainableDevelopmentGoal = db.define('SustainableDevelopmentGoal', {
@@ -13,7 +15,7 @@ const SustainableDevelopmentGoal = db.define('SustainableDevelopmentGoal', {
       allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'SustainableDevelopmentGoal',
     tableName: 'sustainable_development_goals',
     underscored: true,
@@ -22,4 +24,4 @@ const SustainableDevelopmentGoal = db.define('SustainableDevelopmentGoal', {
     collate: 'utf8mb4_0900_ai_ci'
   });
   
-export default SustainableDevelopmentGoal;
+module.exports = SustainableDevelopmentGoal;

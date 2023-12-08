@@ -8,4 +8,4 @@ const RoleType = require('../utils/roleType');
 
 router.post('/api/v1/register', register);
 
-export default router;
+module.exports = router;

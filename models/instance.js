@@ -1,11 +1,16 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+const City = require('./city');
+const Province = require('./province');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Instance = db.define('Instance', {
   instance_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
+    allowNull: false
   },
   type: {
     type: DataTypes.ENUM('Gerakan', 'Komunitas', 'Yayasan'),
@@ -48,6 +53,31 @@ const Instance = db.define('Instance', {
     type: DataTypes.TEXT,
     allowNull: false
   },
+  address_street: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  address_village: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  address_district: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  address_regency: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    
+  },
+  address_province: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  address_postal_code: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   url_company_profile: {
     type: DataTypes.STRING,
     allowNull: false
@@ -56,19 +86,60 @@ const Instance = db.define('Instance', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  social_instagram: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  social_website: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  social_tiktok: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  social_youtube: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   status: {
     type: DataTypes.ENUM('Menunggu', 'Ditolak', 'Wawancara', 'Lolos'),
     allowNull: false,
     defaultValue: 'Menunggu',
     charset: 'utf8mb4',
-    collate: 'utf8mb4_0900_ai_ci'
+    collate: 'utf8mb4_0900_ai_ci',
   },
 }, {
   sequelize: db,
   modelName: 'Instance',
   tableName: 'instances',
   charset: 'utf8mb4',
-  collate: 'utf8mb4_0900_ai_ci'
+  collate: 'utf8mb4_0900_ai_ci',
+  timestamps: false,
+  foreignKeys: [
+    {
+      name: 'instances_ibfk_1',
+      field: 'address_regency',
+      references: {
+        model: City,
+        table: 'cities',
+        field: 'city_id'
+      }
+    },
+    {
+      name: 'instances_ibfk_2',
+      field: 'address_province',
+      references: {
+        model: Province,
+        table: 'provinces',
+        field: 'province_id'
+      }
+    }
+  ]
 });
 
-export default Instance;
+Instance.belongsTo(City, { foreignKey: 'address_regency', as: 'regency' });
+Instance.belongsTo(Province, { foreignKey: 'address_province', as: 'province' });
+
+
+module.exports = Instance;

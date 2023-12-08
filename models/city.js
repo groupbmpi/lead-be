@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Province = require('./province');
 
@@ -26,9 +28,10 @@ const City = db.define('City', {
   modelName: 'City',
   tableName: 'cities',
   underscored: true,
+  timestamps: false
 });
 
 City.belongsTo(Province, { foreignKey: 'province_id', onUpdate: 'CASCADE', onDelete: 'CASCADE' });
 Province.hasMany(City, { foreignKey: 'province_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default City;
+module.exports = City;

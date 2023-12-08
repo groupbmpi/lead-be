@@ -1,7 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
-const Participant = require('./participants');
-const Mentor = require('./mentors');
+const { Database } = require('../config/db');
+const Participant = require('./participant');
+const Mentor = require('./mentor');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const ParticipantsMentors = db.define('ParticipantsMentors', {
     participant_id: {
@@ -9,21 +11,21 @@ const ParticipantsMentors = db.define('ParticipantsMentors', {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'Participant',
+        model: Participant,
         key: 'participant_id'
       }
     },
     mentor_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'Mentor',
+        model: Mentor,
         key: 'mentor_id'
       }
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'ParticipantsMentors',
     tableName: 'participants_mentors',
     underscored: true,
@@ -36,4 +38,4 @@ ParticipantsMentors.belongsTo(Mentor, { foreignKey: 'mentor_id', onDelete: 'CASC
 Participant.hasMany(ParticipantsMentors, { foreignKey: 'participant_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Mentor.hasMany(ParticipantsMentors, { foreignKey: 'mentor_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default ParticipantsMentors;
+module.exports = ParticipantsMentors;

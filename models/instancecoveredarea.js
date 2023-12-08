@@ -1,8 +1,10 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
 
 const Instance = require('./instance');
 const City = require('./city');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const InstanceCoveredArea = db.define('InstanceCoveredArea', 
   {
@@ -25,7 +27,7 @@ const InstanceCoveredArea = db.define('InstanceCoveredArea',
       }
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'InstanceCoveredArea',
     tableName: 'instance_covered_areas',
     timestamps: false,
@@ -43,4 +45,4 @@ InstanceCoveredArea.belongsTo(City, { foreignKey: 'city_id', onDelete: 'CASCADE'
 Instance.hasMany(InstanceCoveredArea, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 City.hasMany(InstanceCoveredArea, { foreignKey: 'city_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default InstanceCoveredArea;
+module.exports = InstanceCoveredArea;

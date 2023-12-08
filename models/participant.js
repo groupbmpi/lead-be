@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Instance = require('./instance');
 
@@ -7,7 +9,8 @@ const Participant = db.define('Participant', {
     participant_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement: true
     },
     instance_id: {
       type: DataTypes.INTEGER,
@@ -57,8 +60,9 @@ const Participant = db.define('Participant', {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isEmail: true,
-        isEmpty: false,
+        isEmail: {
+          msg: 'Email is not valid',
+        },
       },
     },
     password: {
@@ -95,13 +99,14 @@ const Participant = db.define('Participant', {
       allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'Participant',
     tableName: 'participants',
     underscored: true,
+    timestamps: false
   });
 
 Participant.belongsTo(Instance, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Instance.hasMany(Participant, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default Participant;
+module.exports = Participant;

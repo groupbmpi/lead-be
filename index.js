@@ -2,16 +2,40 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
-const adminRouter = require('./routes/adminRoute');
-const taskRouter = require('./routes/taskRoute');
+const { authRouter,
+        adminRouter, 
+        mentorRouter, 
+        participantRouter, 
+        registrationRouter, 
+        cityRouter, 
+        provinceRouter,
+        dashboardSummaryRouter,  
+        instanceRouter} = require('./routes/index');
 
-dotenv.config();
+const { Database } = require('./config/db');
+const { errorResponse } = require('./utils/responseBuilder');
+
+const db = Database.getInstance().getSequelizeInstance();
+
+const informationBannerRouter = require('./routes/informationBannerRoute');
 
 const port = process.env.SERVER_PORT || 5000;
-
-
 const app = express();
+
+dotenv.config();
+db.authenticate()
+  .then(() => {
+    console.log('[server]: Connected to the database');
+    return db.sync(); // Synchronize models with the database
+  })
+  .then(() => {
+    console.log('[server]: Models synchronized with the database');
+  })
+  .catch((error) => {
+    console.error('[server]: Error connecting to the database:', error);
+  });
 
 app.use(cors(
   {
@@ -26,8 +50,29 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(cookieParser());
+
+app.use(authRouter);
 app.use(adminRouter);
-app.use(taskRouter);
+app.use(mentorRouter);
+app.use(participantRouter);
+
+app.use(registrationRouter);
+
+app.use(cityRouter);
+app.use(provinceRouter);
+
+app.use(instanceRouter);
+
+app.use(dashboardSummaryRouter);
+
+// Handle 404 Not Found
+app.use((req, res, next) => {
+  res.status(404).send(errorResponse('404 Not Found', 404));
+});
+
+app.use(informationBannerRouter);
+
 
 app.get('/', (req, res) => {
   res.send('Express Server');

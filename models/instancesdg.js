@@ -1,7 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
 const Instance = require('./instance');
-const Sdg = require('./sustainable_development_goals');
+const Sdg = require('./sustainabledevelopmentgoal');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const InstanceSdg = db.define('InstanceSdg', {
     instance_id: {
@@ -49,4 +51,4 @@ InstanceSdg.belongsTo(Sdg, { foreignKey: 'sdg_id', onUpdate: 'CASCADE', onDelete
 Instance.hasMany(InstanceSdg, { foreignKey: 'instance_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Sdg.hasMany(InstanceSdg, { foreignKey: 'sdg_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default InstanceSdg;
+module.exports = InstanceSdg;

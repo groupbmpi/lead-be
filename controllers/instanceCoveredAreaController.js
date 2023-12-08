@@ -10,7 +10,7 @@ const InstanceCoveredArea = require("../models/instancecoveredarea");
 
 
 // Create a new instance covered area
-const createInstanceCoveredArea = async (req, res) => {
+const create = async (req, res) => {
     try {
         // Get the instance and city IDs from the request body
         const { instance_id, city_id } = req.body;
@@ -42,7 +42,7 @@ const createInstanceCoveredArea = async (req, res) => {
 };
 
 // Get all instance covered areas
-const getAllInstanceCoveredAreas = async (req, res) => {
+const getAll = async (req, res) => {
     try {
         // Get all instance covered areas
         const instanceCoveredAreas = await InstanceCoveredArea.findAll({
@@ -69,7 +69,7 @@ const getAllInstanceCoveredAreas = async (req, res) => {
 };
 
 // Get instance covered area by Instance ID
-const getInstanceCoveredAreaByInstanceId = async (req, res) => {
+const getByInstanceId = async (req, res) => {
     try {
          // Get the instance covered area ID from the request parameters
          const { instance_id } = req.body;
@@ -103,7 +103,7 @@ const getInstanceCoveredAreaByInstanceId = async (req, res) => {
 
 
 // get instance covered area by city id
-const getInstanceCoveredAreaByCityId = async (req, res) => {
+const getByCityId = async (req, res) => {
     try {
          // Get the instance covered area ID from the request parameters
          const { city_id } = req.params;
@@ -137,7 +137,7 @@ const getInstanceCoveredAreaByCityId = async (req, res) => {
 
 
 // Update instance covered area by ID
-const updateInstanceCoveredAreaById = async (req, res) => {
+const updateByInstanceId = async (req, res) => {
     try {
         // Get the instance covered area ID from the request parameters
         const { id } = req.params;
@@ -146,7 +146,11 @@ const updateInstanceCoveredAreaById = async (req, res) => {
         const { instance_id, city_id } = req.body;
 
         // Find the instance covered area by ID
-        const instanceCoveredArea = await InstanceCoveredArea.findByPk(id);
+        const instanceCoveredArea = await InstanceCoveredArea.findOne({
+            where: {
+                instance_id: id
+            }
+        });
 
         // Update the instance and city IDs
         instanceCoveredArea.instance_id = instance_id;
@@ -163,14 +167,49 @@ const updateInstanceCoveredAreaById = async (req, res) => {
     }
 };
 
-// Delete instance covered area by ID
-const deleteInstanceCoveredAreaById = async (req, res) => {
+// Update instance covered area by ID
+const updateByCityId = async (req, res) => {
     try {
         // Get the instance covered area ID from the request parameters
         const { id } = req.params;
 
+        // Get the updated instance and city IDs from the request body
+        const { instance_id, city_id } = req.body;
+
         // Find the instance covered area by ID
-        const instanceCoveredArea = await InstanceCoveredArea.findByPk(id);
+        const instanceCoveredArea = await InstanceCoveredArea.findOne({
+            where: {
+                city_id: id
+            }
+        });
+
+        // Update the instance and city IDs
+        instanceCoveredArea.instance_id = instance_id;
+        instanceCoveredArea.city_id = city_id;
+
+        // Save the updated instance covered area
+        await instanceCoveredArea.save();
+
+        // Return success response
+        return res.status(200).json(successResponse(200, 'Instance covered area updated successfully', instanceCoveredArea));
+    } catch (error) {
+        // Return error response
+        return res.status(500).json(errorResponse(500, 'Failed to update instance covered area', error));
+    }
+}
+
+// Delete instance covered area by ID
+const deleteByInstanceId = async (req, res) => {
+    try {
+        // Get the instance ID from the request parameters
+        const { instance_id } = req.params;
+
+        // Find the instance covered area by instance ID
+        const instanceCoveredArea = await InstanceCoveredArea.findOne({
+            where: {
+                instance_id: instance_id
+            }
+        });
 
         // Delete the instance covered area
         await instanceCoveredArea.destroy();
@@ -183,11 +222,38 @@ const deleteInstanceCoveredAreaById = async (req, res) => {
     }
 };
 
-export {
-    createInstanceCoveredArea,
-    getAllInstanceCoveredAreas,
-    getInstanceCoveredAreaByInstanceId,
-    getInstanceCoveredAreaByCityId,
-    updateInstanceCoveredAreaById,
-    deleteInstanceCoveredAreaById
+
+// Delete instance covered area by city ID
+const deleteByCityId = async (req, res) => {
+    try {
+        // Get the instance ID from the request parameters
+        const { city_id } = req.params;
+
+        // Find the instance covered area by city ID
+        const instanceCoveredArea = await InstanceCoveredArea.findOne({
+            where: {
+                city_id: city_id
+            }
+        });
+
+        // Delete the instance covered area
+        await instanceCoveredArea.destroy();
+
+        // Return success response
+        return successResponse(res, 'Instance covered area deleted successfully');
+    } catch (error) {
+        // Return error response
+        return errorResponse(res, 'Failed to delete instance covered area', error);
+    }
 };
+
+module.exports = {
+    create,
+    getAll,
+    getByInstanceId,
+    getByCityId,
+    updateByInstanceId,
+    updateByCityId,
+    deleteByInstanceId,
+    deleteByCityId
+}
