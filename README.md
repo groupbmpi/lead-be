@@ -16,6 +16,6 @@ adds crud to tasks
 ## Endpoint Details
 - POST `/api/v1/task` (ADMINS, MENTOR) - createTask
 - GET `/api/v1/task` (ALL) - getAllTasks
-- GET `/api/v1/task/:id` (ADMINS, MENTOR) - getTaskById
+- GET `/api/v1/task/:id` (ALL) - getTaskById
 - PUT `/api/v1/task/:id` (ADMINS, MENTOR) - updateTask
 - DELETE `/api/v1/task/:id` (ADMINS, MENTOR) - deleteTask
