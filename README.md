@@ -14,8 +14,8 @@ adds crud to tasks
 - deadline (DATETIME) (NOT NULLABLE)
 
 ## Endpoint Details
-- POST `/api/v1/task` (ADMIN) - createTask
+- POST `/api/v1/task` (ADMINS, MENTOR) - createTask
 - GET `/api/v1/task` (ALL) - getAllTasks
-- GET `/api/v1/task/:id` (ALL) - getTaskById
-- PUT `/api/v1/task/:id` (ADMIN) - updateTask
-- DELETE `/api/v1/task/:id` (ADMIN) - deleteTask
+- GET `/api/v1/task/:id` (ADMINS, MENTOR) - getTaskById
+- PUT `/api/v1/task/:id` (ADMINS, MENTOR) - updateTask
+- DELETE `/api/v1/task/:id` (ADMINS, MENTOR) - deleteTask
