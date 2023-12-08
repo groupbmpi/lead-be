@@ -1,5 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+const Participant = require('./participant');
+const Task = require('./task');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const TaskSubmission = db.define('TaskSubmission', {
     submission_id: {
@@ -8,31 +12,23 @@ const TaskSubmission = db.define('TaskSubmission', {
       primaryKey: true,
       autoIncrement: true
     },
-    mentor_id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      references: {
-        model: 'Mentor',
-        key: 'mentor_id'
-      }
-    },
-    participant_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Participant',
-        key: 'participant_id'
-      }
-    },
     task_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Task',
+        model: Task,
         key: 'task_id'
       }
     },
-    url_submission: {
+    participantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Participant,
+        key: 'participant_id'
+      }
+    },
+    submissionUrl: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -44,22 +40,25 @@ const TaskSubmission = db.define('TaskSubmission', {
       type: DataTypes.ENUM('SUBMITTED', 'NOT SUBMITTED', 'SUBMITTED LATE'),
       allowNull: false,
       defaultValue: 'NOT SUBMITTED'
+    },
+    submissionTime: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'TaskSubmission',
     tableName: 'task_submission',
     underscored: true,
     charset: 'utf8mb4',
-    collate: 'utf8mb4_0900_ai_ci'
+    collate: 'utf8mb4_0900_ai_ci',
+    timestamps: false
   });
 
-TaskSubmission.belongsTo(Mentor, { foreignKey: 'mentor_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 TaskSubmission.belongsTo(Participant, { foreignKey: 'participant_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 TaskSubmission.belongsTo(Task, { foreignKey: 'task_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-Mentor.hasMany(TaskSubmission, { foreignKey: 'mentor_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Participant.hasMany(TaskSubmission, { foreignKey: 'participant_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 Task.hasMany(TaskSubmission, { foreignKey: 'task_id',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
-export default TaskSubmission;
+module.exports = TaskSubmission;

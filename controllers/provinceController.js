@@ -1,5 +1,5 @@
 const Province = require('../models/province');
-const { successResponse, errorResponse } = require('../responseBuilder');
+const { successResponse, errorResponse } = require('../utils/responseBuilder');
 
 // Get all provinces
 const getAllProvinces = async (req, res) => {

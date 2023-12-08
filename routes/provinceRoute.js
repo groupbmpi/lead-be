@@ -14,10 +14,10 @@ const {
 } = require('../controllers/provinceController');
 
 // Get all provinces
-router.get('/api/v1/province', checkAuth, checkAuthRole(RoleType.ALL), getAllProvinces);
+router.get('/api/v1/province', getAllProvinces);
 
 // Get a province by ID
-router.get('/api/v1/province/:id', checkAuth, checkAuthRole(RoleType.ALL), getProvinceById);
+router.get('/api/v1/province/:id', getProvinceById);
 
 // // Create a new province
 // router.post('/api/v1/province', checkAuth, checkAuthRole(RoleType.ALL), createProvince);
