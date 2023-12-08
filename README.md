@@ -1,112 +1,29 @@
-# Dashboard Summary Endpoint
 
-## Overview
-The `dashboard-summary` endpoint provides a summary of data for the dashboard. It includes information such as types, sectors, established years, areas, covered areas, beneficiaries, total beneficiaries, fund sources, and participant data.
+## Branch: information-banners
+adds crud to information-banners
 
-## How to Use
-To retrieve the dashboard summary, make a `GET` request to the following endpoint: /api/v1/dashboard-summary
+## Modifications
+- add information-banner model (./models/informationBanner.js)
+- add routing for information-banner (./routes/informationBannerRoute.js)
+- add CRUD endpoint for information-banner model (./controllers/informationBannerController.js)
+- add endpoint to broadcast banner information to an email list (./controllers/informationBannerController.js)
+- add mailer utility for broadcast feature (./config/mailer.js)
+- modify .env -> add some new entries for mailer.js config (./.env)
 
+## Model Detail
+- information_banner_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
+- url_picture (VARCHAR) (NULLABLE)
+- text (TEXT) (NOT NULLABLE)
 
-## Input Parameters
+## Endpoint Details
+- POST `/api/v1/informationBanner` (SUPERADMIN) - createInformationBanner
+- GET `/api/v1/informationBanner` (ALL) - getAllInformationBanners
+- GET `/api/v1/informationBanner/:id` (ALL) - getInformationBannerById
+- PUT `/api/v1/informationBanner/:id` (SUPERADMIN) - updateInformationBanner
+- DELETE `/api/v1/informationBanner/:id` (SUPERADMIN) - deleteInformationBanner
+- POST `/api/v1/informationBanner/send/:id` (SUPERADMIN) - sendBannerContentById
 
-### Query Parameters
-
-- **include (optional):** Comma-separated list of data elements to include in the summary. Possible values:
-  - "type"
-  - "sector"
-  - "established_year"
-  - "area"
-  - "covered_areas"
-  - "beneficiaries"
-  - "total_beneficiaries"
-  - "fund_source"
-  - "participant_data"
-  - "all" (to include all data elements)
-
-- **status (optional):** Filter instances based on status. Possible values:
-  - "all" (default): Include all instances, regardless of status.
-  - Specific status value: Filter instances based on the provided status.
-
-### Example Request
-```http
-GET /api/v1/dashboard-summary?include=type,area,beneficiaries&status=Lolos
-```
-
-### Output
-#### Success Response (200 OK)
-The endpoint responds with a JSON object containing the constructed summary.
-```
-{
-  "status": 200,
-  "message": "Berhasil mendapatkan rekapan data dashboard",
-  "data": {
-    "type": { /* ... */ },
-    "sector": { /* ... */ },
-    "established_year": { /* ... */ },
-    "area": { /* ... */ },
-    "covered_areas": { /* ... */ },
-    "beneficiaries": { /* ... */ },
-    "total_beneficiaries": { /* ... */ },
-    "fund_source": { /* ... */ },
-    "participant_data": { /* ... */ }
-  }
-}
-```
-
-#### Error Response (500 Internal Server Error)
-In case of an error, the endpoint responds with a JSON object containing an error message.
-
-```
-{
-  "status": 500,
-  "message": "Internal Server Error: <error_message>"
-}
-```
-
-### Example Usage
-#### cURL
-```cURL
-curl -X GET "https://your-api-base-url/api/v1/dashboard-summary?include=type,area,beneficiaries&status=Lolos"
-```
-```cURL
-curl -X GET "https://your-api-base-url/api/v1/dashboard-summary?include=type,area,sector&status=Ditolak"
-```
-#### JavaScript (Node.js - Axios)
-```javascript
-const axios = require('axios');
-
-axios.get('https://your-api-base-url/api/v1/dashboard-summary', {
-  params: {
-    include: 'type,area,beneficiaries',
-    status: 'Lolos'
-  }
-})
-  .then(response => console.log(response.data))
-  .catch(error => console.error(error.response.data));
-```
-
-#### Python (Requests)
-
-```python
-import requests
-
-params = {
-    'include': 'type,area,beneficiaries',
-    'status': 'Lolos'
-}
-
-response = requests.get('https://your-api-base-url/api/v1/dashboard-summary', params=params)
-
-if response.status_code == 200:
-    print(response.json())
-else:
-    print(f"Error: {response.status_code}, {response.json()}")
-```
-
-#### Postman
-1. Open Postman and create a new GET request.
-2. Enter the URL: https://your-api-base-url/api/v1/dashboard-summary.
-3. Add query parameters in the Params section:
-   - Key: include, Value: type,area,beneficiaries
-   - Key: status, Value: Lolos
-4. Click Send to make the request.
+## Special Notes
+- Buat `sendBannerContentById` harus ada email pengirim yang di define di `.env` dan `./config/mailer.js`. 
+- Untuk sekarang bisa pake akun gmail, akun gmailnya harus ada 2FA biar bisa generate app_password
+- app_password itu pass yang digunain buat authenticate ke email pengirim
