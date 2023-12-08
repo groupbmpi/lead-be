@@ -1,10 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
+
 const Mentor = db.define('Mentor', {
     mentor_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement: true
     },
     name: {
       type: DataTypes.STRING,
@@ -16,14 +20,11 @@ const Mentor = db.define('Mentor', {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isEmpty: false,
-      },
+      allowNull: true,
     },
     category: {
       type: DataTypes.ENUM('Desain Program', 'Cluster'),
-      allowNull: false
+      allowNull: true
     },
     birthdate: {
       type: DataTypes.DATE,
@@ -43,7 +44,7 @@ const Mentor = db.define('Mentor', {
     },
     position: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     current_workplace: {
       type: DataTypes.STRING,
@@ -59,11 +60,11 @@ const Mentor = db.define('Mentor', {
       allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'Mentor',
     tableName: 'mentors',
     underscored: true,
     timestamps: false
   });
 
-  export default Mentor;
+module.exports =  Mentor;

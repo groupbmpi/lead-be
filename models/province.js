@@ -1,5 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
-const db = require('../config/db');
+const { Database } = require('../config/db');
+
+const db = Database.getInstance().getSequelizeInstance();
 
 const Province = db.define('Province', {
     province_id: {
@@ -13,13 +15,14 @@ const Province = db.define('Province', {
       allowNull: false
     }
   }, {
-    sequelize,
+    sequelize: db,
     modelName: 'Province',
     tableName: 'provinces',
     underscored: true,
     engine: 'InnoDB',
     charset: 'utf8mb4',
-    collate: 'utf8mb4_0900_ai_ci'
+    collate: 'utf8mb4_0900_ai_ci',
+    timestamps: false
   });
   
-export default Province;
+module.exports = Province;
