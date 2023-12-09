@@ -3,21 +3,20 @@ const router = express.Router();
 const {
     createParticipant,
     addPassword,
+    checkIfPasswordExist,
     updateParticipant,
     deleteParticipant,
-    getAllParticipants,
-    getParticipantsByMentorId,
-    getParticipantById
+    getParticipant
   } = require('../controllers/participantController');
 const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
 const RoleType = require('../utils/roleType');
 
-// router.post('/api/v1/participant/login', loginParticipant);
-router.get('/api/v1/participant', getAllParticipants);
-router.get('/api/v1/participant/:id', getParticipantById);
+router.get('/api/v1/participant', getParticipant);
 router.post('/api/v1/participant', createParticipant);
-router.put('/api/v1/participant/:id?editPassword=true', checkAuth, checkAuthRole(RoleType.PARTICIPANT), addPassword);
-router.put('/api/v1/participant/:id', checkAuth, checkAuthRole(RoleType.ADMINS), updateParticipant);
-router.delete('/api/v1/participant/:id', checkAuthRole, checkAuthRole(RoleType.ADMINS), deleteParticipant);
+router.get('/api/v1/participant/:id/password', checkIfPasswordExist);
+router.put('/api/v1/participant/:id/password/add', addPassword);
+router.put('/api/v1/participant/:id', checkAuth, checkAuthRole([...RoleType.SUPERADMIN, ...RoleType.PARTICIPANT]), updateParticipant);
+router.delete('/api/v1/participant/:id', checkAuth, deleteParticipant);
+// router.delete('/api/v1/participant/:id', checkAuthRole, checkAuthRole(RoleType.SUPERADMIN), deleteParticipant);
 
 module.exports = router;

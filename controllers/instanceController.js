@@ -141,6 +141,20 @@ const getInstancesByCoveredAreaId = async (req, res) => {
       }
     };
 
+    const getInstanceIdByEmail = async (req, res) => {
+      const { email } = req.params;
+
+      try {
+        const instance = await Instance.findOne({ where: { email } });
+        if (!instance) {
+          return res.status(404).json(errorResponse(404, 'Instance not found'));
+        }
+        return res.status(200).json(successResponse(200, 'Instance retrieved successfully', instance.instance_id));
+      } catch (error) {
+        return res.status(500).json(errorResponse(500, 'Failed to retrieve instance'));
+      }
+    }
+
     const deleteInstanceById = async (req, res) => {
       const { id } = req.params;
 
@@ -203,6 +217,8 @@ const getInstancesByCoveredAreaId = async (req, res) => {
 
     module.exports = {
       getInstances,
+      getInstancesName,
+      getInstanceIdByEmail,
       getInstancesByCoveredAreaId,
       getAllInstancesStatus,
       checkStatusByEmail,

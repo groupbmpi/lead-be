@@ -87,7 +87,12 @@ const login = async (req, res) => {
         // Set the token in a cookie
         res.cookie('token', token, { httpOnly: true });
 
-        res.json(successResponse('Login successful', { token }));
+        res.json(successResponse( 200, 'Login successful', { token, user: {
+            id: user.mentor_id || user.participant_id || user.admin_id,
+            name: user.name,
+            email: user.email,
+            role,
+        }}));
     } catch (error) {
         res.status(500).json(errorResponse(500, `Internal server error. ${error}`));
     }
