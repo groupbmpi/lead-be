@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { Database } = require('../config/db');
 
-
 const db = Database.getInstance().getSequelizeInstance();
 const InformationBanner = db.define('InformationBanner', {
   information_banner_id: {
