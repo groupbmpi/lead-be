@@ -1,29 +1,22 @@
-
-## Branch: information-banners
-adds crud to information-banners
+## Branch: task-and-submission
+adds crud to tasks
 
 ## Modifications
-- add information-banner model (./models/informationBanner.js)
-- add routing for information-banner (./routes/informationBannerRoute.js)
-- add CRUD endpoint for information-banner model (./controllers/informationBannerController.js)
-- add endpoint to broadcast banner information to an email list (./controllers/informationBannerController.js)
-- add mailer utility for broadcast feature (./config/mailer.js)
-- modify .env -> add some new entries for mailer.js config (./.env)
+- add task model (./models/task.js)
+- add routing for task (./routes/taskRoute.js)
+- add CRUD endpoint for task model (./controllers/taskController.js)
+- sync coding style mismatch to current main version
 
 ## Model Detail
-- information_banner_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
-- url_picture (VARCHAR) (NULLABLE)
-- text (TEXT) (NOT NULLABLE)
+- task_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
+- mentor_id (FK:Mentors) (INT) (NOT NULLABLE)
+- title (VARCHAR) (NOT NULLABLE)
+- description (TEXT) (NULLABLE)
+- deadline (DATETIME) (NOT NULLABLE)
 
 ## Endpoint Details
-- POST `/api/v1/informationBanner` (SUPERADMIN) - createInformationBanner
-- GET `/api/v1/informationBanner` (ALL) - getAllInformationBanners
-- GET `/api/v1/informationBanner/:id` (ALL) - getInformationBannerById
-- PUT `/api/v1/informationBanner/:id` (SUPERADMIN) - updateInformationBanner
-- DELETE `/api/v1/informationBanner/:id` (SUPERADMIN) - deleteInformationBanner
-- POST `/api/v1/informationBanner/send/:id` (SUPERADMIN) - sendBannerContentById
-
-## Special Notes
-- Buat `sendBannerContentById` harus ada email pengirim yang di define di `.env` dan `./config/mailer.js`. 
-- Untuk sekarang bisa pake akun gmail, akun gmailnya harus ada 2FA biar bisa generate app_password
-- app_password itu pass yang digunain buat authenticate ke email pengirim
+- POST `/api/v1/task` (ADMINS, MENTOR) - createTask
+- GET `/api/v1/task` (ALL) - getAllTasks
+- GET `/api/v1/task/:id` (ALL) - getTaskById
+- PUT `/api/v1/task/:id` (ADMINS, MENTOR) - updateTask
+- DELETE `/api/v1/task/:id` (ADMINS, MENTOR) - deleteTask
