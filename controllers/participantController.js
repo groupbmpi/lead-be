@@ -5,7 +5,7 @@ const { successResponse, errorResponse } = require('../utils/responseBuilder');
 
 const Participant = require('../models/participant');
 const Mentor = require('../models/mentor');
-const ParticipantsMentors = require('../models/participantsMentors');
+const ParticipantsMentors = require('../models/participantsmentors');
 const Instance = require('../models/instance');
 
 const { Database } = require('../config/db');
@@ -94,6 +94,11 @@ const updateParticipant = async (req, res) => {
 
     if (!participant) {
       return res.status(404).json(errorResponse(404, 'Participant not found'));
+    }
+
+    // check if the participant is the same with the user
+    if (participant.participant_id !== req.userData.id && req.userData.role === 'PARTICIPANT' && req.userData.role !== 'SUPERADMIN') {
+        return res.status(403).json(errorResponse(403, 'Forbidden access'));
     }
 
     // Hash the password if provided
@@ -262,7 +267,25 @@ const getParticipant = async (req, res) => {
       if (!participant) {
         return res.status(404).json(errorResponse(404, 'Participant not found'));
       }
-      return res.status(200).json(successResponse(200, 'Participant retrieved successfully', participant));
+      return res.status(200).json(successResponse(200, 'Participant retrieved successfully', {
+        participant_id: participant.participant_id,
+        instance_id: participant.instance_id,
+        participant_number: participant.participant_number,
+        name: participant.name,
+        position: participant.position,
+        latest_education: participant.latest_education,
+        education_background: participant.education_background,
+        focus: participant.focus,
+        whatsapp_number: participant.whatsapp_number,
+        email: participant.email,
+        joining_reason: participant.joining_reason,
+        url_id_card: participant.url_id_card,
+        url_cv: participant.url_cv,
+        confirmation_1: participant.confirmation_1,
+        confirmation_2: participant.confirmation_2,
+        confirmation_3: participant.confirmation_3,
+        role: participant.role
+      }));
     } else if(filter.participant_number || filter.position || filter.latest_education  || filter.focus || filter.confirmation_1 || filter.confirmation_2 || filter.confirmation_3 ) {
       const participants = await Participant.findAll( { where: filter });
       return res.status(200).json(successResponse(200, 'Participants retrieved successfully', {
@@ -364,29 +387,29 @@ const getParticipant = async (req, res) => {
       }));
     } else {
       const participants = await Participant.findAll();
-    return res.status(200).json(successResponse(200, 'Participants retrieved successfully', {
-      total: participants.length,
-      participants: participants.map((participant) => ({
-        participant_id: participant.participant_id,
-        instance_id: participant.instance_id,
-        participant_number: participant.participant_number,
-        name: participant.name,
-        position: participant.position,
-        latest_education: participant.latest_education,
-        education_background: participant.education_background,
-        focus: participant.focus,
-        whatsapp_number: participant.whatsapp_number,
-        email: participant.email,
-        joining_reason: participant.joining_reason,
-        url_id_card: participant.url_id_card,
-        url_cv: participant.url_cv,
-        confirmation_1: participant.confirmation_1,
-        confirmation_2: participant.confirmation_2,
-        confirmation_3: participant.confirmation_3,
-        role: participant.role
-      }))
-    }));
-}
+      return res.status(200).json(successResponse(200, 'Participants retrieved successfully', {
+        total: participants.length,
+        participants: participants.map((participant) => ({
+          participant_id: participant.participant_id,
+          instance_id: participant.instance_id,
+          participant_number: participant.participant_number,
+          name: participant.name,
+          position: participant.position,
+          latest_education: participant.latest_education,
+          education_background: participant.education_background,
+          focus: participant.focus,
+          whatsapp_number: participant.whatsapp_number,
+          email: participant.email,
+          joining_reason: participant.joining_reason,
+          url_id_card: participant.url_id_card,
+          url_cv: participant.url_cv,
+          confirmation_1: participant.confirmation_1,
+          confirmation_2: participant.confirmation_2,
+          confirmation_3: participant.confirmation_3,
+          role: participant.role
+        }))
+      }));
+    }
 
   } catch (error) {
     res.status(500).json(errorResponse(500, `Failed to retrieve participants. ${error.message}.`));
