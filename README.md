@@ -1,22 +1,25 @@
-## Branch: task-and-submission
-adds crud to tasks
+## Branch: submission
+- adds crud to task_submission
+- adds bulk search by fk to task_submission
 
 ## Modifications
-- add task model (./models/task.js)
-- add routing for task (./routes/taskRoute.js)
-- add CRUD endpoint for task model (./controllers/taskController.js)
-- sync coding style mismatch to current main version
+- add taskSubmission model (./models/tasksubmission.js)
+- add routing for task (./routes/taskSubmissionRoute.js)
+- add CRUD endpoint for task model (./controllers/taskSubmissionController.js)
 
 ## Model Detail
-- task_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
-- mentor_id (FK:Mentors) (INT) (NOT NULLABLE)
-- title (VARCHAR) (NOT NULLABLE)
-- description (TEXT) (NULLABLE)
-- deadline (DATETIME) (NOT NULLABLE)
+- submission_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
+- task_id (FK:Task) (INT) (NOT NULLABLE)
+- participant_id (FK:Task) (INT) (NOT NULLABLE)
+- submission_url (VARCHAR) (NOT NULLABLE)
+- feedback (TEXT) (NULLABLE)
+- status (ENUM) (NOT NULLABLE) ('SUBMITTED','NOT SUBMITTED','SUBMITTED LATE')
+- submission_time (DATETIME) (EDITABLE) (AUTO FROM BE)
 
 ## Endpoint Details
-- POST `/api/v1/task` (ADMINS, MENTOR) - createTask
-- GET `/api/v1/task` (ALL) - getAllTasks
-- GET `/api/v1/task/:id` (ALL) - getTaskById
-- PUT `/api/v1/task/:id` (ADMINS, MENTOR) - updateTask
-- DELETE `/api/v1/task/:id` (ADMINS, MENTOR) - deleteTask
+- GET `/api/v1/taskSubmission` (ADMINS, MENTOR) - getAllTaskSubmissions
+- GET `/api/v1/taskSubmission/:id` (ALL) - getTaskSubmissionById
+- PUT `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - updateTaskSubmission
+- DELETE `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - deleteTaskSubmission
+- GET `/api/v1/taskSubmission/task/:id` (ALL) - getAllTaskSubmissionByTaskId
+- GET `/api/v1/taskSubmission/participant/:id` (ALL) - getAllTaskSubmissionByParticipantId
