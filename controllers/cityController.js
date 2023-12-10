@@ -6,7 +6,22 @@ const { successResponse, errorResponse } = require('../utils/responseBuilder');
 // Get all cities
 const getAllCities = async (req, res) => {
     try {
+        const province_id = req.query.province_id;
         const cities = await City.findAll();
+
+        if (province_id) {
+            const province = await Province.findByPk(province_id);
+            if (!province) {
+                return res.status(404).json(errorResponse(404, 'Province not found'));
+            }
+            const cities = await City.findAll({ where: { province_id } });
+            return res.json(successResponse(200, 'Cities found', cities.map((city) => ({
+                id: city.id,
+                name: city.name,
+                province_id: city.province_id,
+            }))));
+        }
+
         res.json(successResponse(200, 'Cities found', cities.map((city) => ({
             id: city.id,
             name: city.name,

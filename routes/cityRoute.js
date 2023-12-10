@@ -27,6 +27,12 @@ const {
  *     summary: Get all cities
  *     description: Get a list of all cities
  *     tags: [City]
+ *     parameters:
+ *       - in: query
+ *         name: province_id
+ *         schema:
+ *           type: integer
+ *         description: Optional. The unique identifier of the province to filter cities.
  *     responses:
  *       200:
  *         description: Cities found successfully
