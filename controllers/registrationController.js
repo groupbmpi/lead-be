@@ -28,10 +28,17 @@ const register = async (req, res) => {
                         
          // Agency (instance) Profile
             // Get the instance information from the request body
-            const address_province = (await Province.findOne({ where: { name: req.body.address_province } })).province_id;
-            const address_regency = (await City.findOne({ where: { name: req.body.address_regency } })).city_id;
+            const address_province = (await Province.findOne({ where: { name: req.body.address_province } }))?.province_id;
+            
+            if(!address_province) {
+                return res.status(400).json(errorResponse(400, `Province with name ${req.body.address_province} does not exist.`));
+            }
 
-            console.log(`address_province: ${address_province}\naddress_regency: ${address_regency}`);
+            const address_regency = (await City.findOne({ where: { name: req.body.address_regency } }))?.city_id;
+
+            if(!address_regency) {
+                return res.status(400).json(errorResponse(400, `Regency with name ${req.body.address_regency} does not exist.`));
+            }
 
             const newInstanceData = {
                 type: req.body.type,
@@ -70,12 +77,12 @@ const register = async (req, res) => {
             const cities = req.body.covered_area_list;  // list of city name ()
 
             for (let i = 0; i < cities.length; i++) {
-                const cityId = (await City.findOne({ where: { name: cities[i] } })).city_id;
+                const cityId = (await City.findOne({ where: { name: cities[i] } }))?.city_id;
+                if(!cityId) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
+                
                 const city = await City.findOne({ where: { city_id: cityId }, include: Province });
-
-                if (!city) {
-                    throw new Error(`City with city_id ${cityId} does not exist.`);
-                }
+                if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
+                
 
                 const provinceName = city.Province.name;
 
@@ -150,7 +157,7 @@ const register = async (req, res) => {
 
             for (let i = 0; i < sdgsName.length; i++) {
                 const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
-                console.log(`sdg: ${sdg}`);
+                if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsName[i]} does not exist.`));
                 const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
 
                 if (!existingInstanceSDG) {

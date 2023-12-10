@@ -7,8 +7,13 @@ const ParticipantMentor = require('../models/participantsmentors');
 const Mentor = require('../models/mentor');
 const Participant = require('../models/participant');
 
-
-// Create a new mentor
+/**
+ * Create a new mentor
+ * @param {object} req.body - The mentor details.
+ * @param {string} req.body.email - The email address of the new mentor.
+ * @param {string} req.body.password - The password for the new mentor.
+ * @returns {object} - The newly created mentor details.
+ */
 const addNew = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -45,7 +50,19 @@ const addNew = async (req, res) => {
     }
 };
 
-// Get mentor by filter (email,category,gender, position,)
+
+/**
+ * Get mentor by filter
+ * @param {object} req.query - The filter parameters.
+ * @param {string} [req.query.email] - Filter mentors by email address.
+ * @param {string} [req.query.category] - Filter mentors by category.
+ * @param {string} [req.query.gender] - Filter mentors by gender.
+ * @param {string} [req.query.position] - Filter mentors by position.
+ * @param {number} [req.query.participant_id] - Filter mentors by participant_id.
+ * @param {string} [req.query.participant_name] - Filter mentors by participant_name. If used, participant_id will be auto-resolved.
+ * @param {string} [req.query.participant_email] - Filter mentors by participant_email. If used, participant_id will be auto-resolved.
+ * @returns {object} - The list of mentors matching the filters.
+ */
 const getMentor = async (req, res) => {
     try {
         const filter = req.query;

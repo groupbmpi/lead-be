@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const { authRouter,
         adminRouter,
@@ -73,16 +75,15 @@ app.use(instanceRouter);
 app.use(dashboardSummaryRouter);
 app.use(informationBannerRouter);
 
-// Handle 404 Not Found
-app.use((req, res, next) => {
-  res.status(404).send(errorResponse('404 Not Found', 404));
-});
-
-app.use(informationBannerRouter);
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (req, res) => {
   res.send('Express Server');
+});
+
+// Handle 404 Not Found
+app.use((req, res, next) => {
+  res.status(404).send(errorResponse('404 Not Found', 404));
 });
 
 app.listen(port, () => {
