@@ -168,14 +168,21 @@ const checkIfPasswordExist = async (req, res) => {
 const addPassword = async (req, res) => {
   try {
     const result = db.transaction(async (t) => {
-      const { id } = req.params;
-      const { password } = req.body;
+      // const { id } = req.params;
+      const { email, password } = req.body;
 
-      // Find the participant
-      const participant = await Participant.findByPk(id);
+      const participant = await Participant.findOne({ where: { email: email } });
       if (!participant) {
         return res.status(404).json(errorResponse(404, 'Participant not found'));
       }
+
+      // const id = participant.participant_id;
+
+      // Find the participant
+      // const participant = await Participant.findByPk(id);
+      // if (!participant) {
+      //   return res.status(404).json(errorResponse(404, 'Participant not found'));
+      // }
 
       // check if participant already has password
       if(participant.password) {
@@ -236,7 +243,7 @@ const deleteParticipant = async (req, res) => {
     }
 
     // Delete the participant
-    await participant.destroy();
+    const result = await participant.destroy();
 
     res.status(200).json(successResponse(200, 'Participant deleted successfully', {
       participant_id: participant.participant_id,

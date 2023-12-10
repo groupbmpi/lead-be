@@ -530,18 +530,11 @@ router.get('/api/v1/participant/:id/password', checkIfPasswordExist);
 
 /**
  * @swagger
- * /api/v1/participant/{id}/password/add:
+ * /api/v1/participant/password/add:
  *   put:
  *     summary: Add password for participant
- *     description: Add a password for a participant, if not already set.
+ *     description: Add a password for a participant if not already set.
  *     tags: [Participant]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique identifier of the participant.
  *     requestBody:
  *       required: true
  *       content:
@@ -549,9 +542,16 @@ router.get('/api/v1/participant/:id/password', checkIfPasswordExist);
  *           schema:
  *             type: object
  *             properties:
+ *               email:
+ *                 type: string
+ *                 example: participant@example.com
+ *                 description: The email of the participant.
  *               password:
  *                 type: string
+ *                 example: mySecurePassword
+ *                 description: The password to set for the participant.
  *             required:
+ *               - email
  *               - password
  *     responses:
  *       200:
@@ -634,7 +634,7 @@ router.get('/api/v1/participant/:id/password', checkIfPasswordExist);
  *                   example: Failed to update participant password
  *                   description: A brief message describing the error.
  */
-router.put('/api/v1/participant/:id/password/add', addPassword);
+router.put('/api/v1/participant/password/add', addPassword);
 
 /**
  * @swagger
@@ -951,6 +951,6 @@ router.put('/api/v1/participant/:id', checkAuth, checkAuthRole([...RoleType.SUPE
  *                   example: Failed to delete participant
  *                   description: A brief message describing the error.
  */
-router.delete('/api/v1/participant/:id', checkAuthRole, checkAuthRole(RoleType.SUPERADMIN), deleteParticipant);
+router.delete('/api/v1/participant/:id', checkAuth, checkAuthRole(RoleType.SUPERADMIN), deleteParticipant);
 
 module.exports = router;
