@@ -278,7 +278,7 @@ router.get('/api/v1/participant', checkAuth, checkAuthRole(RoleType.ALL), getPar
  *   post:
  *     summary: Create a participant
  *     description: Register a new participant for an instance
- *     tags: [Participants]
+ *     tags: [Participant]
  *     requestBody:
  *       required: true
  *       content:
