@@ -21,5 +21,6 @@
 - GET `/api/v1/taskSubmission/:id` (ALL) - getTaskSubmissionById
 - PUT `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - updateTaskSubmission
 - DELETE `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - deleteTaskSubmission
-- GET `/api/v1/taskSubmission/task/:id` (ALL) - getAllTaskSubmissionByTaskId
-- GET `/api/v1/taskSubmission/participant/:id` (ALL) - getAllTaskSubmissionByParticipantId
+- GET `/api/v1/taskSubmission/task/:id` (ALL) - getTaskSubmissionByTaskId
+- GET `/api/v1/taskSubmission/participant/:id` (ALL) - getTaskSubmissionByParticipantId
+- GET `/api/v1/taskSubmission/:participantId/:taskId` (ALL) - getTaskSubmissionByCombination
