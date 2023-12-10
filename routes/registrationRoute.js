@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const { register } = require('../controllers/registrationController');
+const { register, sendRegistrationConfirmation } = require('../controllers/registrationController');
 
 const RoleType = require('../utils/roleType');
 
@@ -260,5 +260,68 @@ const RoleType = require('../utils/roleType');
  *                   type: string
  */
 router.post('/api/v1/register', register);
+
+/**
+ * @swagger
+ * /api/v1/register/send:
+ *   post:
+ *     summary: Send registration confirmation email
+ *     tags: [Registration]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Successful registration
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                   description: The HTTP status code indicating success.
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                   description: The status of the response.
+ *                 message:
+ *                   type: string
+ *                   example: Email notification sent successfully
+ *                   description: A brief message describing the result.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *       '500':
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                   description: The HTTP status code indicating an internal server error.
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                   description: The status of the response indicating an error.
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send email notification. [error message]
+ *                   description: A brief message describing the error.
+ */
+router.post('/api/v1/register/send', sendRegistrationConfirmation);
+
 
 module.exports = router;

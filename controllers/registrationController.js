@@ -14,6 +14,7 @@ const City = require('../models/city');
 const Province = require('../models/province');
 const { Op } = require('sequelize');
 const db = Database.getInstance().getSequelizeInstance();
+const transporter = require('../config/mailer');
 
 // 1.1 Calon peserta dapat mendaftarkan diri dengan mengisi pertanyaan yang diajukan tanpa harus signup/signin akun 
 const register = async (req, res) => {
@@ -251,4 +252,45 @@ const register = async (req, res) => {
     }
 };
 
-  module.exports = { register };
+const sendRegistrationConfirmation = (req, res) => {
+    // Get the participant's email from the request body
+    const { email } = req.body;
+
+    // Email options
+    const mailOptions = {
+      from: process.env.EMAIL_ADDRESS,
+      to: email,
+      subject: 'Registration Confirmation',
+      html: `
+        <style>
+          body { font-family: sans-serif; }
+          h1 { font-size: 20px; font-weight: bold; margin-top: 0; }
+          p { margin-bottom: 10px; }
+          .container { width: 500px; margin: 0 auto; }
+          .footer { text-align: left; }
+        </style>
+      
+        <body>
+          <div class="container">
+            <h1>Pendaftaran Berhasil</h1>
+            <p>Terima kasih telah mendaftar.</p>
+            <p>Jawaban Anda telah kami terima. Kami akan segera menghubungi Anda untuk proses selanjutnya.</p>
+            <p class="footer">Salam,</p>
+            <p class="footer">Bakrie Center Foundation</p>
+          </div>
+        </body>`
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+        return res.status(500).json(errorResponse(500, `Failed to send email notification. ${error.message}`));
+      } else {
+        console.log('Email sent:', info.response);
+        return res.json(successResponse(200, 'Email notification sent successfully'));
+      }
+    });
+  };
+
+  module.exports = { register, sendRegistrationConfirmation };
