@@ -261,6 +261,4 @@ const RoleType = require('../utils/roleType');
  */
 router.post('/api/v1/register', register);
 
-router.post('/api/v1/register', register);
-
 module.exports = router;
