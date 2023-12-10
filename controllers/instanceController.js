@@ -140,6 +140,9 @@ const updateInstanceById = async (req, res) => {
         where: { instance_id: id },
       });
 
+      if(!participants)
+        return res.status(404).json(errorResponse(404, 'Participants not found'));
+
       const authorizedAccess = req.userData.role === 'SUPERADMIN'? true : participants.some((participant) => {
         return participant.participant_id === req.userData.id && req.userData.role === 'PARTICIPANT';
       });
