@@ -9,7 +9,10 @@ const {
     getAllMentorings,
     getMentoringById,
     updateMentoring,
-    deleteMentoring
+    deleteMentoring,
+    getMentoringByMentorId,
+    getMentoringByParticipantId,
+    getMentoringByCombination
 } = require('../controllers/mentoringController');
 
 // Create
@@ -26,5 +29,14 @@ router.put('/api/v1/mentoring/:id', checkAuth, checkAuthRole([RoleType.ADMINS, R
 
 // Delete
 router.delete('/api/v1/mentoring/:id', checkAuth, checkAuthRole([RoleType.ADMINS, RoleType.MENTOR]), deleteMentoring);
+
+// Bulk search by Participant ID
+router.get('/api/v1/mentoring/participant/:id', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByMentorId);
+
+// Bulk search by Mentor ID
+router.get('/api/v1/mentoring/mentor/:id', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByParticipantId);
+
+// Bulk search by Mentor ID and Participant ID
+router.get('/api/v1/mentoring/:participantId/:mentorId', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByCombination);
 
 module.exports = router;
