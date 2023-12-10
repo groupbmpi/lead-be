@@ -10,6 +10,7 @@ const { authRouter,
         registrationRouter,
         mentorRouter,
         taskRouter,
+        taskSubmissionRouter,
         instanceRouter,
         cityRouter,
         provinceRouter,
@@ -58,6 +59,7 @@ app.use(mentorRouter);
 app.use(participantRouter);
 
 app.use(taskRouter);
+app.use(taskSubmissionRouter);
 
 app.use(registrationRouter);
 
