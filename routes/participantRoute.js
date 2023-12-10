@@ -11,7 +11,7 @@ const {
 const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
 const RoleType = require('../utils/roleType');
 
-router.get('/api/v1/participant', getParticipant);
+router.get('/api/v1/participant', checkAuth, checkAuthRole(RoleType.ALL), getParticipant);
 router.post('/api/v1/participant', createParticipant);
 router.get('/api/v1/participant/:id/password', checkIfPasswordExist);
 router.put('/api/v1/participant/:id/password/add', addPassword);

@@ -34,11 +34,19 @@ const loginAdmin = async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ userId: user.admin_id, role }, process.env.JWT_SECRET);
-
+        const payload = { 
+            id: user.admin_id,
+            role,
+            name: user.name,
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        };
+        
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+        
         // Set the token in a cookie
         res.cookie('token', token, { httpOnly: true });
-
+        
         res.json(successResponse('Login successful', { token, user: {
             id: user.admin_id,
             name: user.name,
@@ -82,7 +90,15 @@ const login = async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ userId: user.mentor_id || user.participant_id || user.admin_id, role }, process.env.JWT_SECRET);
+        const payload = { 
+            id: user.mentor_id || user.participant_id || user.admin_id,
+            role,
+            name: user.name,
+            iat: Math.floor(Date.now() / 1000), 
+            exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        };
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
 
         // Set the token in a cookie
         res.cookie('token', token, { httpOnly: true });
@@ -126,20 +142,20 @@ const me = async (req, res, next) => {
         }
 
         // Verify the token
-        const { userId, role } = jwt.verify(token, process.env.JWT_SECRET);
+        const { id, role } = jwt.verify(token, process.env.JWT_SECRET);
 
         // Find the user by ID based on the role
         let user;
         switch (role.toUpperCase()) {
             case 'MENTOR':
-                user = await Mentor.findById(userId);
+                user = await Mentor.findByPk(id);
                 break;
             case 'PARTICIPANT':
-                user = await Participant.findById(userId);
+                user = await Participant.findByPk(id);
                 break;
             case 'ADMIN':
             case 'SUPERADMIN':
-                user = await Admin.findByPk(userId);
+                user = await Admin.findByPk(id);
                 break;
             default:
                 return res.status(400).json(errorResponse(400, 'Invalid role'));
@@ -148,7 +164,7 @@ const me = async (req, res, next) => {
             return res.status(404).json(errorResponse(404, 'User not found'));
         }
 
-        res.status(200).json(successResponse(200, "Berhasil", {  id: user.mentor_id || user.participant_id || user.admin_id, name: user.name, email: user.email, role: user.role }));
+        res.status(200).json(successResponse(200, "Successfully retrieved user's data", {  id: user.mentor_id || user.participant_id || user.admin_id, name: user.name, email: user.email, role: user.role }));
     } catch (error) {
         res.status(500).json(errorResponse(500, `Internal server error. ${error}`));
     }

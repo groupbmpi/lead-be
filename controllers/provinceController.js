@@ -26,6 +26,20 @@ const getProvinceById = async (req, res) => {
     }
 };
 
+const getProvinceIdByName = async (req, res) => {
+    const { name } = req.params;
+    try {
+        const province = await Province.findOne({ where: { name } });
+        if (province) {
+            res.json(successResponse(200, 'Success', province.province_id));
+        } else {
+            res.status(404).json(errorResponse(404, 'Province not found'));
+        }
+    } catch (error) {
+        res.status(500).json(errorResponse(500, 'Internal server error'));
+    }
+}
+
 // // Create a new province
 // const createProvince = async (req, res) => {
 //     const { name } = req.body;
@@ -74,6 +88,7 @@ const getProvinceById = async (req, res) => {
 module.exports = {
     getAllProvinces,
     getProvinceById,
+    getProvinceIdByName
     // createProvince,
     // updateProvinceById,
     // deleteProvinceById
