@@ -196,7 +196,7 @@ const addPassword = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Update the participant
-      await participant.update({ password: hashedPassword });
+      await participant.update({ password: hashedPassword }, { transaction: t });
 
       res.status(200).json(successResponse(200, 'Participant password added', {
         participant_id: participant.participant_id,

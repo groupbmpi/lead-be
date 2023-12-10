@@ -98,6 +98,10 @@ const login = async (req, res) => {
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
         };
 
+        if(mentor.mentor_id) {
+            payload.category = mentor.category;
+        }
+
         const token = jwt.sign(payload, process.env.JWT_SECRET);
 
         // Set the token in a cookie
