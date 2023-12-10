@@ -1,26 +1,26 @@
-## Branch: submission
-- adds crud to task_submission
-- adds bulk search by fk to task_submission
+## Branch: mentoring
+- adds crud to mentoring
+- adds bulk search by fk to mentoring
 
 ## Modifications
-- add taskSubmission model (./models/tasksubmission.js)
-- add routing for task (./routes/taskSubmissionRoute.js)
-- add CRUD endpoint for task model (./controllers/taskSubmissionController.js)
+- modify mentoring model (./models/mentoring.js)
+- add routing for mentoring (./routes/mentoringRoute.js)
+- add CRUD endpoint for mentoring model (./controllers/mentoringController.js)
 
 ## Model Detail
-- submission_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
-- task_id (FK:Task) (INT) (NOT NULLABLE)
-- participant_id (FK:Task) (INT) (NOT NULLABLE)
-- submission_url (VARCHAR) (NOT NULLABLE)
-- feedback (TEXT) (NULLABLE)
-- status (ENUM) (NOT NULLABLE) ('SUBMITTED','NOT SUBMITTED','SUBMITTED LATE')
-- submission_time (DATETIME) (EDITABLE) (AUTO FROM BE)
+- mentoring_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
+- mentor_id (FK:Mentor) (INT) (NOT NULLABLE)
+- participant_id (FK:Participant) (INT) (NOT NULLABLE)
+- title (VARCHAR) (NOT NULLABLE)
+- description (TEXT) (NOT NULLABLE)
+- datetime_start (DATETIME)
+- datetime_finish (DATETIME)
 
 ## Endpoint Details
-- GET `/api/v1/taskSubmission` (ADMINS, MENTOR) - getAllTaskSubmissions
-- GET `/api/v1/taskSubmission/:id` (ALL) - getTaskSubmissionById
-- PUT `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - updateTaskSubmission
-- DELETE `/api/v1/taskSubmission/:id` (ADMINS, MENTOR) - deleteTaskSubmission
-- GET `/api/v1/taskSubmission/task/:id` (ALL) - getTaskSubmissionByTaskId
-- GET `/api/v1/taskSubmission/participant/:id` (ALL) - getTaskSubmissionByParticipantId
-- GET `/api/v1/taskSubmission/:participantId/:taskId` (ALL) - getTaskSubmissionByCombination
+- GET `/api/v1/mentoring` (ADMINS, MENTOR) - getAllMentoring
+- GET `/api/v1/mentoring/:id` (ALL) - getMentoringById
+- PUT `/api/v1/mentoring/:id` (ADMINS, MENTOR) - updateMentoring
+- DELETE `/api/v1/mentoring/:id` (ADMINS, MENTOR) - deleteMentoring
+- GET `/api/v1/mentoring/mentor/:id` (ALL) - getMentoringByMentorId
+- GET `/api/v1/mentoring/participant/:id` (ALL) - getMentoringByParticipantId
+- GET `/api/v1/mentoring/:participantId/:mentorId` (ALL) - getMentoringByCombination
