@@ -4,7 +4,9 @@ const adminRouter = require('./adminRoute');
 const participantRouter = require('./participantRoute');
 const mentorRouter = require('./mentorRoute');
 const registrationRouter = require('./registrationRoute');
+const mentoringRouter = require('./mentoringRoute');
 const taskRouter = require('./taskRoute');
+const taskSubmissionRouter = require('./taskSubmissionRoute');
 
 const cityRouter = require('./cityRoute');
 const provinceRouter = require('./provinceRoute');  
@@ -20,7 +22,9 @@ module.exports = {
     participantRouter,
     mentorRouter,
     registrationRouter,
+    mentoringRouter,
     taskRouter,
+    taskSubmissionRouter,
     instanceRouter,
     cityRouter,
     provinceRouter,

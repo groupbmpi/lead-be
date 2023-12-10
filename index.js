@@ -12,11 +12,13 @@ const { authRouter,
         registrationRouter,
         mentorRouter,
         taskRouter,
+        taskSubmissionRouter,
         instanceRouter,
         cityRouter,
         provinceRouter,
         dashboardSummaryRouter, 
-        informationBannerRouter } = require('./routes/index');
+        informationBannerRouter, 
+        mentoringRouter } = require('./routes/index');
 
 const { Database } = require('./config/db');
 const { errorResponse } = require('./utils/responseBuilder');
@@ -59,7 +61,9 @@ app.use(adminRouter);
 app.use(mentorRouter);
 app.use(participantRouter);
 
+app.use(mentoringRouter);
 app.use(taskRouter);
+app.use(taskSubmissionRouter);
 
 app.use(registrationRouter);
 
