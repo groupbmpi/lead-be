@@ -13,10 +13,11 @@ const options = {
     servers: [
       {
         url: `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT || 3000}`,
+        
       },
     ],
   },
-  apis: ['../routes/*.js'], // Path to the API routes
+  apis: ['./routes/*.js'], // Path to the API routes
 };
 
 // Initialize swagger-jsdoc
