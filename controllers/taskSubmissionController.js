@@ -93,20 +93,23 @@ const deleteTaskSubmission = async (req, res) => {
     }
 };
 
-const getAllTaskSubmissionByTaskId = async (req, res) => {
+const getTaskSubmissionByTaskId = async (req, res) => {
     try {
-        const taskId = req.params.id; 
+        const id = req.params.id; 
 
         // Find all submission with the specified task_id
         const submissions = await TaskSubmission.findAll({
-            where: { task_id: taskId },
+            where: { task_id: id },
         });
 
         if (submissions.length === 0) {
             return res.status(404).json({ message: 'No submissions found with the specified task_id' });
         }
 
-        res.status(200).json({ message: 'Submissions retrieved successfully', submissions });
+        res.status(200).json({
+            message: `Submissions retrieved successfully for Task ID: ${id}`,
+            submissions,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -114,20 +117,46 @@ const getAllTaskSubmissionByTaskId = async (req, res) => {
 };
 
 
-const getAllTaskSubmissionByParticipantId = async (req, res) => {
+const getTaskSubmissionByParticipantId = async (req, res) => {
     try {
-        const participantId = req.params.id; 
+        const id = req.params.id; 
 
         // Find all tasks with the specified task_id
         const submissions = await TaskSubmission.findAll({
-            where: { participant_id: participantId },
+            where: { participant_id: id },
         });
 
         if (submissions.length === 0) {
             return res.status(404).json({ message: 'No submissions found with the specified participant_id' });
         }
 
-        res.status(200).json({ message: 'Submissions retrieved successfully', submissions });
+        res.status(200).json({
+            message: `Submissions retrieved successfully for Participant ID: ${id}`,
+            submissions,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+const getTaskSubmissionByCombination = async (req, res) => {
+    try {
+        const { participantId, taskId } = req.params;
+        
+        // Perform search using both participant_id and mentor_id
+        const submissions = await TaskSubmission.findAll({
+            where: { participant_id: participantId, task_id: taskId },
+        });
+    
+        if (submissions.length === 0) {
+            return res.status(404).json({ message: 'No submissions found with the specified combination' });
+        }
+    
+        res.status(200).json({
+            message: `submissions retrieved successfully for Participant ID: ${participantId} and Task ID: ${taskId}`,
+            submissions,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -140,6 +169,7 @@ module.exports = {
     getTaskSubmissionById,
     updateTaskSubmission,
     deleteTaskSubmission,
-    getAllTaskSubmissionByTaskId,
-    getAllTaskSubmissionByParticipantId,
+    getTaskSubmissionByTaskId,
+    getTaskSubmissionByParticipantId,
+    getTaskSubmissionByCombination
 };

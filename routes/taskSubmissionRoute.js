@@ -10,8 +10,9 @@ const {
   getTaskSubmissionById,
   updateTaskSubmission,
   deleteTaskSubmission,
-  getAllTaskSubmissionByTaskId,
-  getAllTaskSubmissionByParticipantId,
+  getTaskSubmissionByTaskId,
+  getTaskSubmissionByParticipantId,
+  getTaskSubmissionByCombination,
 } = require('../controllers/taskSubmissionController');
 
 // Create
@@ -30,9 +31,12 @@ router.put('/api/v1/taskSubmission/:id', checkAuth, checkAuthRole([RoleType.ADMI
 router.delete('/api/v1/taskSubmission/:id', checkAuth, checkAuthRole([RoleType.ADMINS, RoleType.MENTOR]), deleteTaskSubmission);
 
 // Read (All) by Task id
-router.get('/api/v1/taskSubmission/task/:id', checkAuth, checkAuthRole(RoleType.ALL), getAllTaskSubmissionByTaskId);
+router.get('/api/v1/taskSubmission/task/:id', checkAuth, checkAuthRole(RoleType.ALL), getTaskSubmissionByTaskId);
 
 // Read (All) by Participant id
-router.get('/api/v1/taskSubmission/participant/:id', checkAuth, checkAuthRole(RoleType.ALL), getAllTaskSubmissionByParticipantId);
+router.get('/api/v1/taskSubmission/participant/:id', checkAuth, checkAuthRole(RoleType.ALL), getTaskSubmissionByParticipantId);
+
+// Read (All) by combination
+router.get('/api/v1/taskSubmission/:participantId/:taskId', checkAuth, checkAuthRole(RoleType.ALL), getTaskSubmissionByCombination);
 
 module.exports = router;
