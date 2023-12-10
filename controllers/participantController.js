@@ -101,6 +101,11 @@ const updateParticipant = async (req, res) => {
         return res.status(403).json(errorResponse(403, 'Forbidden access'));
     }
 
+    // check if participant already has password
+    if(participant.password) {
+      return res.status(400).json(errorResponse(400, 'Participant already has password'));
+    }
+
     // Hash the password if provided
     let hashedPassword;
     if (participantData.password) {
@@ -184,7 +189,7 @@ const addPassword = async (req, res) => {
 
       // check if instance status is LOLOS
       if (instance.status.toUpperCase() !== 'LOLOS') {
-        return res.status(400).json(errorResponse(400, 'Your instance status is not LOLOS. You cannot add password.'));
+        return res.status(400).json(errorResponse(400, 'Your instance status is not "LOLOS". You cannot add password.'));
       }  
 
       // Hash the password
@@ -214,7 +219,7 @@ const addPassword = async (req, res) => {
       }));
     });
   } catch (error) {
-    res.status(500).json(errorResponse(500, `Failed to update participant password. ${error.message}. ${error.stack}`));
+    res.status(500).json(errorResponse(500, `Failed to update participant password. ${error.message}.`));
   }
 }
 
