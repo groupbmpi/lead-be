@@ -10,9 +10,13 @@ const Mentor = db.define('Mentor', {
     autoIncrement: true,
     allowNull: false,
   },
+  mentor_id_bcf: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   name: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   email: {
     type: DataTypes.STRING,
@@ -21,9 +25,6 @@ const Mentor = db.define('Mentor', {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
   },
   category: {
     type: DataTypes.ENUM('Desain Program', 'Cluster'),

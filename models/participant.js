@@ -70,7 +70,7 @@ const Participant = db.define('Participant', {
       allowNull: true,
     },
     joining_reason: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     url_id_card: {
