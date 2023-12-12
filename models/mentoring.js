@@ -44,6 +44,10 @@ const Mentoring = db.define('Mentoring', {
         type: DataTypes.DATE,
         allowNull: false,
     },
+    url_meet: {
+        type: DataTypes.STRING, 
+        allowNull: true,
+    },
 }, {
     sequelize: db,
     modelName: 'Mentoring',

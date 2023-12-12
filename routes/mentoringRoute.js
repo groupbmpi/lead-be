@@ -16,27 +16,27 @@ const {
 } = require('../controllers/mentoringController');
 
 // Create
-router.post('/api/v1/mentoring', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), createMentoring);
+router.post('/api/v1/mentoring',  createMentoring);
 
 // Read (All)
-router.get('/api/v1/mentoring', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), getAllMentorings);
+router.get('/api/v1/mentoring',  getAllMentorings);
 
 // Read (One)
-router.get('/api/v1/mentoring/:id', checkAuth, checkAuthRole(RoleType.ALL), getMentoringById);
+router.get('/api/v1/mentoring/:id',  getMentoringById);
 
 // Update
-router.put('/api/v1/mentoring/:id', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), updateMentoring);
+router.put('/api/v1/mentoring/:id',  updateMentoring);
 
 // Delete
-router.delete('/api/v1/mentoring/:id', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), deleteMentoring);
+router.delete('/api/v1/mentoring/:id',  deleteMentoring);
 
 // Bulk search by Participant ID
-router.get('/api/v1/mentoring/participant/:id', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByMentorId);
+router.get('/api/v1/mentoring/participant/:id',  getMentoringByParticipantId);
 
 // Bulk search by Mentor ID
-router.get('/api/v1/mentoring/mentor/:id', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByParticipantId);
+router.get('/api/v1/mentoring/mentor/:id',  getMentoringByMentorId);
 
 // Bulk search by Mentor ID and Participant ID
-router.get('/api/v1/mentoring/:participantId/:mentorId', checkAuth, checkAuthRole(RoleType.ALL), getMentoringByCombination);
+router.get('/api/v1/mentoring/:participantId/:mentorId',  getMentoringByCombination);
 
 module.exports = router;
