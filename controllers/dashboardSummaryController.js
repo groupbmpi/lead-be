@@ -44,7 +44,9 @@ const getDashboardSummary = async (req, res) => {
     if (!totalOnlyParam && (includeParams.includes('social_website') || includeParams.includes('all'))) summary.social_website = {}; //
     if (!totalOnlyParam && (includeParams.includes('social_tiktok') || includeParams.includes('all'))) summary.social_tiktok = {}; //
     if (!totalOnlyParam && (includeParams.includes('social_youtube') || includeParams.includes('all'))) summary.social_youtube = {}; //
-    if (!totalOnlyParam && (includeParams.includes('address_data') || includeParams.includes('all'))) summary.address_data = {}; //
+    // if (!totalOnlyParam && (includeParams.includes('address_data') || includeParams.includes('all'))) summary.address_data = {}; //
+    if (includeParams.includes('address_regency') || includeParams.includes('all')) summary.address_regency = []; //
+    if (includeParams.includes('address_province') || includeParams.includes('all')) summary.address_province = []; //
     if (includeParams.includes('covered_areas') || includeParams.includes('all')) summary.covered_areas = {};
     if (includeParams.includes('beneficiaries') || includeParams.includes('all')) summary.beneficiaries = {};
     if (includeParams.includes('total_beneficiaries') || includeParams.includes('all'))
@@ -352,19 +354,19 @@ const getDashboardSummary = async (req, res) => {
         }
       }
 
-      // address_data
-      if (summary.hasOwnProperty('address_data')) {
-        if (!summary.address_data[instance.name]) {
-          summary.address_data[instance.name] = {
-            street: instance.address_street,
-            village: instance.address_village,
-            district: instance.address_district,
-            city: instance.address_city_id,
-            province: instance.address_province_id,
-            postal_code: instance.address_postal_code,
-          };
-        }
-      }
+      // // address_data
+      // if (summary.hasOwnProperty('address_data')) {
+      //   if (!summary.address_data[instance.name]) {
+      //     summary.address_data[instance.name] = {
+      //       street: instance.address_street,
+      //       village: instance.address_village,
+      //       district: instance.address_district,
+      //       city: instance.address_regency,
+      //       province: instance.address_province,
+      //       postal_code: instance.address_postal_code,
+      //     };
+      //   }
+      // }
 
       // established_year
       if (summary.hasOwnProperty('established_year')) {
@@ -398,31 +400,31 @@ const getDashboardSummary = async (req, res) => {
         });
       }
 
-      // // alamat: province
-      // if (summary.hasOwnProperty('address_province')) {
-      //   const province = Province.findOne({ where: { province_id: instance.address_province } }).name;
-      //   if (!summary.province[province]) {
-      //     summary.province[province] = {
-      //       total: 0,
-      //       instances: [],
-      //     };
-      //   }
-      //   summary.province[province].total += 1;
-      //   if(!totalOnlyParam) summary.province[province].instances.push(instance.name);
-      // }
+      // alamat: province
+      if (summary.hasOwnProperty('address_province')) {
+        const province = instance.address_province;
+        if(province)
+        {
+          if (!summary.province[province]) {
+            summary.province[province] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
+          }
+          summary.province[province].total += 1;
+          if(!totalOnlyParam) summary.province[province].instances.push(instance.name);
+        }
+      }
 
-      // // alamat: city
-      // if (summary.hasOwnProperty('address_regency')) {
-      //   const city = City.findOne({ where: { city_id: instance.address_regency } }).name;
-      //   if (!summary.city[city]) {
-      //     summary.city[city] = {
-      //       total: 0,
-      //       instances: [],
-      //     };
-      //   }
-      //   summary.city[city].total += 1;
-      //   if(!totalOnlyParam) summary.city[city].instances.push(instance.name);
-      // }
+      // alamat: city
+      if (summary.hasOwnProperty('address_regency')) {
+        const city = instance.address_regency;
+        if(city)
+        {
+          if(!summary.city[city]) {
+            summary.city[city] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
+          }
+          summary.city[city].total += 1;
+          if(!totalOnlyParam) summary.city[city].instances.push(instance.name);
+        }
+      }
 
       // instances_beneficiaries
       if (summary.hasOwnProperty('beneficiaries')) {

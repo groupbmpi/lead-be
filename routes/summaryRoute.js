@@ -27,6 +27,12 @@ const RoleType = require('../utils/roleType');
  *           type: string
  *         description: Filter instances by status (all, Menunggu, Ditolak, Wawancara, Lolos).
  *         example: "Lolos"
+ *       - in: query
+ *         name: total_only
+ *         schema:
+ *           type: boolean
+ *         description: Get only the total count without instance details.
+ *         example: true
  *     responses:
  *       200:
  *         description: Successfully retrieved dashboard summary
@@ -71,12 +77,38 @@ const RoleType = require('../utils/roleType');
  *                     total_beneficiaries:
  *                       type: object
  *                       description: Summary of total beneficiaries
+ *                       properties:
+ *                         total:
+ *                           type: number
+ *                           description: Total number of beneficiaries
+ *                         instances_total_beneficiaries:
+ *                           type: object
+ *                           description: Summary of instances by total beneficiaries
  *                     fund_source:
  *                       type: object
  *                       description: Summary of instances by fund source
  *                     participant_data:
  *                       type: object
  *                       description: Summary of participant data
+ *                       properties:
+ *                         total:
+ *                           type: number
+ *                           description: Total number of participants
+ *                         position:
+ *                           type: object
+ *                           description: Summary of instances by participant position
+ *                         latest_education:
+ *                           type: object
+ *                           description: Summary of instances by participant education
+ *                         confirmation_1:
+ *                           type: object
+ *                           description: Summary of instances by participant confirmation_1
+ *                         confirmation_2:
+ *                           type: object
+ *                           description: Summary of instances by participant confirmation_2
+ *                         confirmation_3:
+ *                           type: object
+ *                           description: Summary of instances by participant confirmation_3
  *       401:
  *         description: Unauthorized
  *         content:

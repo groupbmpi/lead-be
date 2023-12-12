@@ -1,4 +1,3 @@
-
 const { Model, DataTypes } = require('sequelize');
 const { Database } = require('../config/db');
 const City = require('./city');
@@ -27,8 +26,9 @@ const Instance = db.define('Instance', {
     allowNull: false,
   },
   batch: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER(1).UNSIGNED.ZEROFILL,
     allowNull: false,
+    defaultValue: '6',
   },
   sector: {
     type: DataTypes.ENUM('Kesehatan', 'Pendidikan', 'Lingkungan'),
@@ -201,12 +201,12 @@ const Instance = db.define('Instance', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  address_city_id: {
-    type: DataTypes.INTEGER,
+  address_regency: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  address_province_id: {
-    type: DataTypes.INTEGER,
+  address_province: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
   address_postal_code: {
@@ -222,8 +222,7 @@ const Instance = db.define('Instance', {
   timestamps: false,
 });
 
-Instance.belongsTo(City, { foreignKey: 'address_city_id', as: 'city' });
-Instance.belongsTo(Province, { foreignKey: 'address_province_id', as: 'province' });
+Instance.belongsTo(City, { foreignKey: 'address_regency', as: 'city' });
+Instance.belongsTo(Province, { foreignKey: 'address_province', as: 'province' });
 
 module.exports = Instance;
-
