@@ -19,6 +19,50 @@ const transporter = require('../config/mailer');
 // 1.1 Calon peserta dapat mendaftarkan diri dengan mengisi pertanyaan yang diajukan tanpa harus signup/signin akun 
 const register = async (req, res) => {
     try {
+        const { 
+            type,
+            name,
+            email,
+            batch,
+            sector,
+            focus,
+            established_month,
+            established_year,
+            area,
+            total_beneficiaries,
+            description,
+            url_company_profile,
+            url_program_proposal,
+            status,
+            stable_fund_source,
+            information_source,
+            desain_program_training,
+            desain_program_knowledge,
+            sustainability_training,
+            sustainability_knowledge,
+            social_report_training,
+            social_report_knowledge,
+            url_program_report,
+            expectation,
+            other_inquiries,
+            social_instagram,
+            social_website,
+            social_tiktok,
+            social_youtube,
+            address_street,
+            address_village,
+            address_district,
+            // address_city_id,
+            // address_province_id,
+            address_regency,
+            address_province,
+            address_postal_code, } = req.body;
+
+        // Validasi
+        // if (!name || !email || !type || !sector || !focus || !established_month || !established_year || !area || !total_beneficiaries || !description || !address_street || !address_village || !address_district || !address_regency || !address_province || !url_company_profile || !url_program_proposal || !status || !stable_fund_source || !information_source || !desain_program_training || !desain_program_knowledge || !sustainability_training || !sustainability_knowledge || !social_report_training || !social_report_knowledge || !url_program_report || !expectation || !other_inquiries || !social_instagram || !social_website || !social_tiktok || !social_youtube || !address_postal_code || !batch) {
+        //   return res.status(400).json(errorResponse(400, `Data yang diberikan tidak lengkap.`));
+        // }
+
         const result = await db.transaction(async (t) => {
             // variable for summary of registration process
             let instance;
@@ -26,71 +70,83 @@ const register = async (req, res) => {
             let instanceBeneficiaries = []; // list of instance_beneficiary
             let instanceFundSources = []; // list of instance_fund_source
             let instanceSdg = []; // list of sdg
-                        
+
+            // const city = await City.findById(address_city_id);
+            // const province = await Province.findById(address_province_id);
+            // if (!city || !province) return res.status(400).json(errorResponse(400, `City or province with id ${address_city_id} or ${address_province_id} does not exist.`));
+
+            const city = await City.findOne({ where: { name: address_regency }, include: Province });
+            if (!city) return res.status(400).json(errorResponse(400, `City with name ${address_regency} does not exist.`));
+
+            const province = await Province.findOne({ where: { name: address_province } });
+            if (!province) return res.status(400).json(errorResponse(400, `Province with name ${address_province} does not exist.`));
+
          // Agency (instance) Profile
             // Get the instance information from the request body
-            const address_province = (await Province.findOne({ where: { name: req.body.address_province } }))?.province_id;
-            
-            if(!address_province) {
-                return res.status(400).json(errorResponse(400, `Province with name ${req.body.address_province} does not exist.`));
-            }
-
-            const address_regency = (await City.findOne({ where: { name: req.body.address_regency } }))?.city_id;
-
-            if(!address_regency) {
-                return res.status(400).json(errorResponse(400, `Regency with name ${req.body.address_regency} does not exist.`));
-            }
-
             const newInstanceData = {
-                type: req.body.type,
-                name: req.body.name,
-                email: req.body.email,
-                sector: req.body.sector,
-                focus: req.body.focus,
-                established_month: req.body.established_month,
-                established_year: req.body.established_year,
-                area: req.body.area,
-                total_beneficiaries: req.body.total_beneficiaries,
-                description: req.body.description,
-                address_street: req.body.address_street,
-                address_village: req.body.address_village,
-                address_district: req.body.address_district,
+                type: type,
+                name: name,
+                email: email,
+                batch: batch,
+                sector: sector,
+                focus: focus,
+                established_month: established_month,
+                established_year: established_year,
+                area: area,
+                total_beneficiaries: total_beneficiaries,
+                description: description,
+                url_company_profile: url_company_profile,
+                url_program_proposal: url_program_proposal,
+                status: status,
+                stable_fund_source: stable_fund_source,
+                information_source: information_source,
+                desain_program_training: desain_program_training,
+                desain_program_knowledge: desain_program_knowledge,
+                sustainability_training: sustainability_training,
+                sustainability_knowledge: sustainability_knowledge,
+                social_report_training: social_report_training,
+                social_report_knowledge: social_report_knowledge,
+                url_program_report: url_program_report,
+                expectation: expectation,
+                other_inquiries: other_inquiries,
+                social_instagram: social_instagram,
+                social_website: social_website,
+                social_tiktok: social_tiktok,
+                social_youtube: social_youtube,
+                address_street: address_street,
+                address_village: address_village,
+                address_district: address_district,
+                // address_city_id: address_city_id,
+                // address_province_id: address_province_id,
                 address_regency: address_regency,
                 address_province: address_province,
-                address_postal_code: req.body.address_postal_code,
-                url_company_profile: req.body.url_company_profile,
-                url_program_proposal: req.body.url_program_proposal,
-                social_instagram: req.body.social_instagram,
-                social_website: req.body.social_website,
-                social_tiktok: req.body.social_tiktok,
-                social_youtube: req.body.social_youtube,
-              };
+                address_postal_code: address_postal_code,
+            };
+                
 
             // Check if instance already exists
-            const existingInstance = await Instance.findOne({ where: { [Op.or]: [{ name: newInstanceData.name }, { email: newInstanceData.email }] } });
-            if (existingInstance)
-                instance = existingInstance;
-            else
-                instance = await Instance.create(newInstanceData, { transaction: t })
+            const existingInstance = await Instance.findOne({ where: { email: req.body.email, batch: req.body.batch } });
+            if (existingInstance) instance = existingInstance;
+            else instance = await Instance.create(newInstanceData, { transaction: t })
 
          // Create instance covered area
             // Get the instance covered area information from the request body
-            const cities = req.body.covered_area_list;  // list of city name ()
+            const cities = req.body.covered_area_list;  // list of city name
 
             for (let i = 0; i < cities.length; i++) {
-                const cityId = (await City.findOne({ where: { name: cities[i] } }))?.city_id;
-                if(!cityId) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
+                const city = (await City.findOne({ where: { name: cities[i] }, include: Province }));
+                if(!city) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
                 
-                const city = await City.findOne({ where: { city_id: cityId }, include: Province });
-                if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
+                // const city = await City.findOne({ where: { city_id: cityId }, include: Province });
+                // if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
                 
 
                 const provinceName = city.Province.name;
 
-                const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: cityId, instance_id: instance.instance_id } });
+                const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: city.city_id, instance_id: instance.instance_id } });
 
                 if (!existingInstanceCoveredArea) {
-                    const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: cityId, instance_id: instance.instance_id }, { transaction: t });
+                    const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: city.city_id, instance_id: instance.instance_id }, { transaction: t });
                 }
 
                 instance_covered_area.push({
@@ -199,11 +255,12 @@ const register = async (req, res) => {
             }
 
             // Return success response
-            return res.status(200).json(successResponse(200, `Hasil copy pendaftaran anda telah dikirim ke ${instance.email} 
-            Status pendaftaran dapat dilihat di Home > Seleksi.`, {
+            return res.status(200).json(successResponse(200, 'Your registration has been submitted successfully.', {
                 instance_id: instance.instance_id,
+                type: instance.type,
                 name: instance.name,
                 email: instance.email,
+                batch: instance.batch,
                 sector: instance.sector,
                 focus: instance.focus,
                 established_month: instance.established_month,
@@ -211,22 +268,36 @@ const register = async (req, res) => {
                 area: instance.area,
                 total_beneficiaries: instance.total_beneficiaries,
                 description: instance.description,
-                address_street: instance.address_street,
-                address_village: instance.address_village,
-                address_district: instance.address_district,
-                address_regency: instance.address_regency,
-                address_province: instance.address_province,
-                address_postal_code: instance.address_postal_code,
                 url_company_profile: instance.url_company_profile,
                 url_program_proposal: instance.url_program_proposal,
+                status: instance.status,
+                stable_fund_source: instance.stable_fund_source,
+                information_source: instance.information_source,
+                desain_program_training: instance.desain_program_training,
+                desain_program_knowledge: instance.desain_program_knowledge,
+                sustainability_training: instance.sustainability_training,
+                sustainability_knowledge: instance.sustainability_knowledge,
+                social_report_training: instance.social_report_training,
+                social_report_knowledge: instance.social_report_knowledge,
+                url_program_report: instance.url_program_report,
+                expectation: instance.expectation,
+                other_inquiries: instance.other_inquiries,
                 social_instagram: instance.social_instagram,
                 social_website: instance.social_website,
                 social_tiktok: instance.social_tiktok,
                 social_youtube: instance.social_youtube,
-                instance_covered_area: instance_covered_area,
-                instance_beneficiaries: instanceBeneficiaries,
-                instance_fund_sources: instanceFundSources,
-                instance_sdg: instanceSdg,
+                address_street: instance.address_street,
+                address_village: instance.address_village,
+                address_district: instance.address_district,
+                // address_city_id: instance.address_city_id,
+                // address_province_id: instance.address_province_id,
+                address_regency: instance.address_regency,
+                address_province: instance.address_province,
+                address_postal_code: instance.address_postal_code,
+                instance_covered_area: instance.instance_covered_area,
+                instance_beneficiaries: instance.instanceBeneficiaries,
+                instance_fund_sources: instance.instanceFundSources,
+                instance_sdg: instance.instanceSdg,
                 instance_participants: participants.map((participant) => ({
                     participant_number: participant.participant_number,
                     name: participant.name,
