@@ -14,9 +14,10 @@ const {
   getTaskSubmissionByParticipantId,
   getTaskSubmissionByCombination,
 } = require('../controllers/taskSubmissionController');
+const Participant = require('../models/participant');
 
 // Create
-router.post('/api/v1/taskSubmission', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), createTaskSubmission);
+router.post('/api/v1/taskSubmission', checkAuth, checkAuthRole([...RoleType.PARTICIPANT, ...RoleType.ADMINS, ...RoleType.MENTOR]), createTaskSubmission);
 
 // Read (All)
 router.get('/api/v1/taskSubmission', checkAuth, checkAuthRole([...RoleType.ADMINS, ...RoleType.MENTOR]), getAllTaskSubmissions);
