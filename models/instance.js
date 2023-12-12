@@ -1,3 +1,4 @@
+
 const { Model, DataTypes } = require('sequelize');
 const { Database } = require('../config/db');
 const City = require('./city');
@@ -23,6 +24,10 @@ const Instance = db.define('Instance', {
   },
   email: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  batch: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   sector: {
@@ -87,30 +92,6 @@ const Instance = db.define('Instance', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  address_street: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  address_village: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  address_district: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  address_city_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  address_province_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  address_postal_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   url_company_profile: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -118,22 +99,6 @@ const Instance = db.define('Instance', {
   url_program_proposal: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  social_instagram: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  social_website: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  social_tiktok: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  social_youtube: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
   status: {
     type: DataTypes.ENUM('Menunggu', 'Ditolak', 'Wawancara', 'Lolos'),
@@ -208,6 +173,46 @@ const Instance = db.define('Instance', {
     allowNull: true,
     defaultValue: null,
   },
+  social_instagram: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  social_website: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  social_tiktok: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  social_youtube: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  address_street: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  address_village: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  address_district: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  address_city_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  address_province_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  address_postal_code: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   sequelize: db,
   modelName: 'Instance',
@@ -221,3 +226,4 @@ Instance.belongsTo(City, { foreignKey: 'address_city_id', as: 'city' });
 Instance.belongsTo(Province, { foreignKey: 'address_province_id', as: 'province' });
 
 module.exports = Instance;
+
