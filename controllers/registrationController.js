@@ -29,6 +29,7 @@ const register = async (req, res) => {
             established_month,
             established_year,
             area,
+            beneficiaries,
             total_beneficiaries,
             description,
             url_company_profile,
@@ -93,6 +94,7 @@ const register = async (req, res) => {
                 established_month: established_month,
                 established_year: established_year,
                 area: area,
+                beneficiaries: beneficiaries,
                 total_beneficiaries: total_beneficiaries,
                 description: description,
                 url_company_profile: url_company_profile,
@@ -157,8 +159,8 @@ const register = async (req, res) => {
 
             const targetBeneficiariesId = [];
 
-            for (let i = 0; i < instanceBeneficiaries.length; i++) {
-                const beneficiaryName = beneficiaries[i];
+            for (let i = 0; i < beneficiaries.length; i++) {
+                const beneficiaryName = beneficiaries[i];  // list of beneficiary name
                 const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
 
                 if (!existingBeneficiary) {
