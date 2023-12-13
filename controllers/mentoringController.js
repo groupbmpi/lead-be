@@ -1,30 +1,32 @@
 const Mentoring = require('../models/mentoring');
 const Mentor = require('../models/mentor');
+const Participant = require('../models/participant');
 
 const createMentoring = async (req, res) => {
     try {
-        const { mentor_id, participant_id, title, description, datetime_start, datetime_finish } = req.body;
-
-         // Check if datetime_start is earlier than datetime_finish
-        if (new Date(datetime_start) >= new Date(datetime_finish)) {
-            return res.status(400).json({ message: 'datetime_start must be earlier than datetime_finish' });
-        }
+        const { mentor_id, participant_id, title, description, datetime_start, datetime_finish, url_meet } = req.body;
 
         // Check if the mentor with the given mentor_id exists
         const mentor = await Mentor.findByPk(mentor_id);
-
         if (!mentor) {
             return res.status(404).json({ message: 'Mentor not found with the provided mentor_id' });
         }
 
-        // Create the mentoring since the mentor exists
-        const newMentoring = await Mentoring.create({ 
-            mentor_id, 
+        // Check if the participant with the given participant_id exists
+        const participant = await Participant.findByPk(participant_id);
+        if (!participant) {
+            return res.status(404).json({ message: 'Participant not found with the provided participant_id' });
+        }
+
+        // Create the mentoring since both mentor and participant exist
+        const newMentoring = await Mentoring.create({
+            mentor_id,
             participant_id,
-            title, 
-            description, 
+            title,
+            description,
             datetime_start,
-            datetime_finish
+            datetime_finish,
+            url_meet,
         });
 
         res.status(201).json({ message: 'Mentoring created', newMentoring });
@@ -60,12 +62,7 @@ const getMentoringById = async (req, res) => {
 
 const updateMentoring = async (req, res) => {
     try {
-        const { mentor_id, participant_id, title, description, datetime_start, datetime_finish } = req.body;
-        
-        // Check if datetime_start is earlier than datetime_finish
-        if (new Date(datetime_start) >= new Date(datetime_finish)) {
-            return res.status(400).json({ message: 'datetime_start must be earlier than datetime_finish' });
-        }
+        const { mentor_id, participant_id, title, description, datetime_start, datetime_finish, url_meet } = req.body;
 
         // Find the mentoring by its primary key (mentoring_id)
         const mentoring = await Mentoring.findByPk(req.params.id);
@@ -82,6 +79,7 @@ const updateMentoring = async (req, res) => {
             description,
             datetime_start,
             datetime_finish,
+            url_meet,
         });
 
         res.status(200).json({ message: 'Mentoring updated successfully' });
