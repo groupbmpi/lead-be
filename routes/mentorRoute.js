@@ -40,9 +40,18 @@ const {
  *                 type: string
  *                 format: email
  *                 description: The email address of the new mentor.
+ *               name:
+ *                 type: string
+ *                 description: The name of the new mentor.
  *               password:
  *                 type: string
  *                 description: The password for the new mentor.
+ *               category:
+ *                 type: string
+ *                 description: The category of expertise of the new mentor.
+ *               mentor_id_bcf:
+ *                 type: string
+ *                 description: The mentor_id_bcf of the new mentor.
  *     responses:
  *       201:
  *         description: Mentor created successfully
@@ -70,6 +79,10 @@ const {
  *                       type: string
  *                       example: 123456
  *                       description: The unique identifier of the newly created mentor.
+ *                     mentor_id_bcf:
+ *                       type: string
+ *                       example: 789012
+ *                       description: The mentor_id_bcf of the newly created mentor.
  *                     name:
  *                       type: string
  *                       example: John Doe

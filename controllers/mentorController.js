@@ -7,16 +7,9 @@ const ParticipantMentor = require('../models/participantsmentors');
 const Mentor = require('../models/mentor');
 const Participant = require('../models/participant');
 
-/**
- * Create a new mentor
- * @param {object} req.body - The mentor details.
- * @param {string} req.body.email - The email address of the new mentor.
- * @param {string} req.body.password - The password for the new mentor.
- * @returns {object} - The newly created mentor details.
- */
 const addNew = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, name, password, category, mentor_id_bcf } = req.body;
         const existingMentor = await Mentor.findOne({ where: { email } });
         if (existingMentor) {
             res.status(409).json(errorResponse(409, 'Mentor with the same email already exists'));
@@ -26,12 +19,16 @@ const addNew = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const mentor = await Mentor.create({
+            mentor_id_bcf,
+            name,
             email,
             password: hashedPassword,
+            category,
             role: 'MENTOR'
         });
         res.status(201).json(successResponse(201, 'Mentor created successfully', {
             mentor_id: mentor.mentor_id,
+            mentor_id_bcf: mentor.mentor_id_bcf,
             name: mentor.name,
             email: mentor.email,
             category: mentor.category,
@@ -51,23 +48,12 @@ const addNew = async (req, res) => {
 };
 
 
-/**
- * Get mentor by filter
- * @param {object} req.query - The filter parameters.
- * @param {string} [req.query.email] - Filter mentors by email address.
- * @param {string} [req.query.category] - Filter mentors by category.
- * @param {string} [req.query.gender] - Filter mentors by gender.
- * @param {string} [req.query.position] - Filter mentors by position.
- * @param {number} [req.query.participant_id] - Filter mentors by participant_id.
- * @param {string} [req.query.participant_name] - Filter mentors by participant_name. If used, participant_id will be auto-resolved.
- * @param {string} [req.query.participant_email] - Filter mentors by participant_email. If used, participant_id will be auto-resolved.
- * @returns {object} - The list of mentors matching the filters.
- */
 const getMentor = async (req, res) => {
     try {
         const filter = req.query;
 
         const allowedFilterFields = [
+            'mentor_id_bcf',
             'email',
             'category',
             'gender',
@@ -78,20 +64,36 @@ const getMentor = async (req, res) => {
         ];
         const filterFields = Object.keys(filter);
         const isFilterInvalid = filterFields.some((field) => !allowedFilterFields.includes(field));
-
-        if (isFilterInvalid) {
-            return res
-                .status(400)
-                .json(errorResponse(400, `Invalid query params: ${filterFields.join(', ')}`));
-        }
-
-        if (filter.email) {
+        if (isFilterInvalid) return res.status(400).json(errorResponse(400, `Invalid query params: ${filterFields.join(', ')}`));
+        
+        if(filter.mentor_id_bcf) {
+            if (filterFields.length > 1) {
+                return res.status(400).json(errorResponse(400, `Invalid query params: ${filterFields.join(', ')}. If you want to search mentor by mentor_id_bcf, please only use mentor_id_bcf as query params`));
+            }
+            const mentor = await Mentor.findOne({ where: { mentor_id_bcf: filter.mentor_id_bcf } });
+            return res.status(200).json(successResponse(200, 'Mentor retrieved successfully', {
+                mentor_id: mentor.mentor_id,
+                mentor_id_bcf: mentor.mentor_id_bcf,
+                name: mentor.name,
+                email: mentor.email,
+                category: mentor.category,
+                birthdate: mentor.birthdate,
+                gender: mentor.gender,
+                phone_number: mentor.phone_number,
+                education_background: mentor.education_background,
+                position: mentor.position,
+                current_workplace: mentor.current_workplace,
+                url_picture: mentor.url_picture,
+                role: mentor.role,
+            }));
+        } else if (filter.email) {
             if (filterFields.length > 1) {
               return res.status(400).json(errorResponse(400, `Invalid query params: ${filterFields.join(', ')}. If you want to search mentor by email, please only use email as query params`));
             }
             const mentor = await Mentor.findOne({ where: { email: filter.email } });
             return res.status(200).json(successResponse(200, 'Mentor retrieved successfully', {
                 mentor_id: mentor.mentor_id,
+                mentor_id_bcf: mentor.mentor_id_bcf,
                 name: mentor.name,
                 email: mentor.email,
                 category: mentor.category,
@@ -110,6 +112,7 @@ const getMentor = async (req, res) => {
             total: mentorList.length,
             mentors: mentorList.map((mentor) => ({
                 mentor_id: mentor.mentor_id,
+                mentor_id_bcf: mentor.mentor_id_bcf,
                 name: mentor.name,
                 email: mentor.email,
                 category: mentor.category,
@@ -156,6 +159,7 @@ const getMentor = async (req, res) => {
               total: mentorList.length,
               mentors: mentorList.map((mentor) => ({
                   mentor_id: mentor.mentor_id,
+                  mentor_id_bcf: mentor.mentor_id_bcf,
                   name: mentor.name,
                   email: mentor.email,
                   category: mentor.category,
@@ -175,6 +179,7 @@ const getMentor = async (req, res) => {
                 total: mentors.length,
                 mentors: mentors.map((mentor) => ({
                   mentor_id: mentor.mentor_id,
+                  mentor_id_bcf: mentor.mentor_id_bcf,
                   name: mentor.name,
                   email: mentor.email,
                   category: mentor.category,
@@ -190,7 +195,7 @@ const getMentor = async (req, res) => {
             }));
         }
     } catch (error) {
-        res.status(500).json(errorResponse(500, error.message + ' ' + error.stack));
+        res.status(500).json(errorResponse(500, 'Internal server error'));
     }
 };
 
@@ -201,6 +206,7 @@ const getMentorById = async (req, res) => {
         if (mentor) {
             res.status(200).json(successResponse(200, 'Mentor retrieved successfully', {
                 mentor_id: mentor.mentor_id,
+                mentor_id_bcf: mentor.mentor_id_bcf,
                 name: mentor.name,
                 email: mentor.email,
                 category: mentor.category,
@@ -237,6 +243,7 @@ const updateMentor = async (req, res) => {
         const updatedMentor = await mentor.update(req.body);
         res.status(200).json(successResponse(200, 'Mentor updated successfully', {
             mentor_id: updatedMentor.mentor_id,
+            mentor_id_bcf: updatedMentor.mentor_id_bcf,
             name: updatedMentor.name,
             email: updatedMentor.email,
             category: updatedMentor.category,
@@ -251,7 +258,7 @@ const updateMentor = async (req, res) => {
         }));
                 
     } catch (error) {
-        res.status(500).json(errorResponse(500, error.message));
+        res.status(500).json(errorResponse(500, 'Internal server error'));
     }
 };
 
@@ -263,6 +270,7 @@ const deleteMentor = async (req, res) => {
             await mentor.destroy();
             res.status(200).json(successResponse(200, 'Mentor deleted successfully', {
                 mentor_id: mentor.mentor_id,
+                mentor_id_bcf: mentor.mentor_id_bcf,
                 name: mentor.name,
                 email: mentor.email,
                 role: mentor.role,
