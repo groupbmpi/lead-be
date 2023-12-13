@@ -45,8 +45,8 @@ const getDashboardSummary = async (req, res) => {
     if (!totalOnlyParam && (includeParams.includes('social_tiktok') || includeParams.includes('all'))) summary.social_tiktok = {}; //
     if (!totalOnlyParam && (includeParams.includes('social_youtube') || includeParams.includes('all'))) summary.social_youtube = {}; //
     // if (!totalOnlyParam && (includeParams.includes('address_data') || includeParams.includes('all'))) summary.address_data = {}; //
-    if (includeParams.includes('address_regency') || includeParams.includes('all')) summary.address_regency = []; //
-    if (includeParams.includes('address_province') || includeParams.includes('all')) summary.address_province = []; //
+    if (includeParams.includes('address_regency') || includeParams.includes('all')) summary.address_regency = {}; //
+    if (includeParams.includes('address_province') || includeParams.includes('all')) summary.address_province = {}; //
     if (includeParams.includes('covered_areas') || includeParams.includes('all')) summary.covered_areas = {};
     if (includeParams.includes('beneficiaries') || includeParams.includes('all')) summary.beneficiaries = {};
     if (includeParams.includes('total_beneficiaries') || includeParams.includes('all'))
@@ -182,7 +182,8 @@ const getDashboardSummary = async (req, res) => {
           summary.type[instance.type] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.type[instance.type].total += 1;
-        if(!totalOnlyParam) summary.type[instance.type].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.type[instance.type].instances.includes(instance.name)) 
+          summary.type[instance.type].instances.push(instance.name);
       }
 
       // batch
@@ -191,7 +192,8 @@ const getDashboardSummary = async (req, res) => {
           summary.batch[instance.batch] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.batch[instance.batch].total += 1;
-        if(!totalOnlyParam) summary.batch[instance.batch].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.batch[instance.batch].instances.includes(instance.name)) 
+          summary.batch[instance.batch].instances.push(instance.name);
       }
 
       // sector
@@ -200,7 +202,8 @@ const getDashboardSummary = async (req, res) => {
           summary.sector[instance.sector] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.sector[instance.sector].total += 1;
-        if(!totalOnlyParam) summary.sector[instance.sector].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.sector[instance.sector].instances.includes(instance.name)) 
+          summary.sector[instance.sector].instances.push(instance.name);
       }
 
       // focus
@@ -209,7 +212,8 @@ const getDashboardSummary = async (req, res) => {
           summary.focus[instance.focus] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.focus[instance.focus].total += 1;
-        if(!totalOnlyParam) summary.focus[instance.focus].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.focus[instance.focus].instances.includes(instance.name)) 
+          summary.focus[instance.focus].instances.push(instance.name);
       }
 
       // description
@@ -239,7 +243,8 @@ const getDashboardSummary = async (req, res) => {
           summary.stable_fund_source[instance.stable_fund_source] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.stable_fund_source[instance.stable_fund_source].total += 1;
-        if(!totalOnlyParam) summary.stable_fund_source[instance.stable_fund_source].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.stable_fund_source[instance.stable_fund_source].instances.includes(instance.name)) 
+          summary.stable_fund_source[instance.stable_fund_source].instances.push(instance.name);
       }
 
       // information_source
@@ -248,7 +253,8 @@ const getDashboardSummary = async (req, res) => {
           summary.information_source[instance.information_source] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.information_source[instance.information_source].total += 1;
-        if(!totalOnlyParam) summary.information_source[instance.information_source].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.information_source[instance.information_source].instances.includes(instance.name)) 
+          summary.information_source[instance.information_source].instances.push(instance.name);
       }
 
       // desain_program_training
@@ -257,9 +263,8 @@ const getDashboardSummary = async (req, res) => {
           summary.desain_program_training[instance.desain_program_training] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.desain_program_training[instance.desain_program_training].total += 1;
-        if(!totalOnlyParam) summary.desain_program_training[instance.desain_program_training].instances.push(
-          instance.name
-        );
+        if(!totalOnlyParam && !summary.desain_program_training[instance.desain_program_training].instances.includes(instance.name)) 
+          summary.desain_program_training[instance.desain_program_training].instances.push(instance.name);
       }
 
       // desain_program_knowledge
@@ -275,9 +280,8 @@ const getDashboardSummary = async (req, res) => {
           summary.sustainability_training[instance.sustainability_training] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.sustainability_training[instance.sustainability_training].total += 1;
-        if(!totalOnlyParam) summary.sustainability_training[instance.sustainability_training].instances.push(
-          instance.name
-        );
+        if(!totalOnlyParam && !summary.sustainability_training[instance.sustainability_training].instances.includes(instance.name)) 
+          summary.sustainability_training[instance.sustainability_training].instances.push(instance.name);
       }
 
       // sustainability_knowledge
@@ -293,9 +297,8 @@ const getDashboardSummary = async (req, res) => {
           summary.social_report_training[instance.social_report_training] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.social_report_training[instance.social_report_training].total += 1;
-        if(!totalOnlyParam) summary.social_report_training[instance.social_report_training].instances.push(
-          instance.name
-        );
+        if(!totalOnlyParam && !summary.social_report_training[instance.social_report_training].instances.includes(instance.name)) 
+          summary.social_report_training[instance.social_report_training].instances.push(instance.name);
       }
 
       // social_report_knowledge
@@ -374,7 +377,8 @@ const getDashboardSummary = async (req, res) => {
           summary.established_year[instance.established_year] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.established_year[instance.established_year].total += 1;
-        if(!totalOnlyParam) summary.established_year[instance.established_year].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.established_year[instance.established_year].instances.includes(instance.name)) 
+          summary.established_year[instance.established_year].instances.push(instance.name);
       }
 
       // (cakupan) area
@@ -383,7 +387,8 @@ const getDashboardSummary = async (req, res) => {
           summary.area[instance.area] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
         }
         summary.area[instance.area].total += 1;
-        if(!totalOnlyParam) summary.area[instance.area].instances.push(instance.name);
+        if(!totalOnlyParam && !summary.area[instance.area].instances.includes(instance.name)) 
+          summary.area[instance.area].instances.push(instance.name);
       }
 
       // covered areas: province
@@ -396,7 +401,8 @@ const getDashboardSummary = async (req, res) => {
             summary.covered_areas[province] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
           summary.covered_areas[province].total += 1;
-          if(!totalOnlyParam) summary.covered_areas[province].instances.push(instance.name);
+          if(!totalOnlyParam && !summary.covered_areas[province].instances.includes(instance.name)) 
+            summary.covered_areas[province].instances.push(instance.name);
         });
       }
 
@@ -405,11 +411,12 @@ const getDashboardSummary = async (req, res) => {
         const province = instance.address_province;
         if(province)
         {
-          if (!summary.province[province]) {
-            summary.province[province] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
+          if (!summary.address_province[province]) {
+            summary.address_province[province] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
-          summary.province[province].total += 1;
-          if(!totalOnlyParam) summary.province[province].instances.push(instance.name);
+          summary.address_province[province].total += 1;
+          if(!totalOnlyParam && !summary.address_province[province].instances.includes(instance.name)) 
+            summary.address_province[province].instances.push(instance.name);
         }
       }
 
@@ -418,22 +425,27 @@ const getDashboardSummary = async (req, res) => {
         const city = instance.address_regency;
         if(city)
         {
-          if(!summary.city[city]) {
-            summary.city[city] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
+          if(!summary.address_regency[city]) {
+            summary.address_regency[city] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
-          summary.city[city].total += 1;
-          if(!totalOnlyParam) summary.city[city].instances.push(instance.name);
+          summary.address_regency[city].total += 1;
+          console.log(city);
+          if(!totalOnlyParam && !summary.address_regency[city].instances.includes(instance.name)) 
+            summary.address_regency[city].instances.push(instance.name);
+          console.log(summary.address_regency[city]);
         }
       }
 
       // instances_beneficiaries
       if (summary.hasOwnProperty('beneficiaries')) {
+        console.log(instance.InstanceBeneficiaries);
         instance.InstanceBeneficiaries.forEach((instance_beneficiary) => {
           if (!summary.beneficiaries[instance_beneficiary.Beneficiary.name]) {
             summary.beneficiaries[instance_beneficiary.Beneficiary.name] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
           summary.beneficiaries[instance_beneficiary.Beneficiary.name].total += 1;
-          if(!totalOnlyParam) summary.beneficiaries[instance_beneficiary.Beneficiary.name].instances.push(
+          if(!totalOnlyParam && !summary.beneficiaries[instance_beneficiary.Beneficiary.name].instances.includes(instance.name)) 
+            summary.beneficiaries[instance_beneficiary.Beneficiary.name].instances.push(
             instance.name
           );
         });
@@ -455,7 +467,8 @@ const getDashboardSummary = async (req, res) => {
             summary.fund_source[instance_fund_source.FundSource.name] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
           summary.fund_source[instance_fund_source.FundSource.name].total += 1;
-          if(!totalOnlyParam) summary.fund_source[instance_fund_source.FundSource.name].instances.push(instance.name);
+          if(!totalOnlyParam && !summary.fund_source[instance_fund_source.FundSource.name].instances.includes(instance.name)) 
+            summary.fund_source[instance_fund_source.FundSource.name].instances.push(instance.name);
         });
       }
 
@@ -526,7 +539,7 @@ const getDashboardSummary = async (req, res) => {
 
     return res.status(200).json(successResponse(200, 'Berhasil mendapatkan rekapan data dashboard', summary));
   } catch (error) {
-    res.status(500).json(errorResponse(500, 'Internal server error. ' + error.message));
+    res.status(500).json(errorResponse(500, 'Internal server error. ' + error.message + ' ' + error.stack));
   }
 };
 
