@@ -111,6 +111,7 @@ const {
  *               message: Instances retrieved successfully
  *               data:
  *                 - instance_id: 1
+ *                   batch: Batch1
  *                   type: Gerakan
  *                   name: Example Instance
  *                   email: example@example.com
@@ -141,6 +142,7 @@ const {
  *                   address_postal_code: Example Postal Code
  *                   url_company_profile: http://example.com/company_profile
  *                   url_program_proposal: http://example.com/program_proposal
+ *                   url_report_program: http://example.com/report_program
  *                   social_instagram: example_instagram
  *                   social_website: http://example.com
  *                   social_tiktok: example_tiktok

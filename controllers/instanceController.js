@@ -79,7 +79,7 @@ const checkStatusByEmail = async (req, res) => {
 //   try {
 //     const {
 //       type,
-//       cluster,
+//       sector,
 //       established_year,
 //       area,
 //       province,
@@ -94,7 +94,7 @@ const checkStatusByEmail = async (req, res) => {
 //     // filter instances
 //     const filteredInstances = filter(instances, {
 //       type,
-//       cluster,
+//       sector,
 //       established_year,
 //       area,
 //       province,
@@ -154,7 +154,7 @@ const updateInstanceById = async (req, res) => {
       const result = await instance.update(req.body);
       if(result) return res.status(200).json(successResponse(200, 'Instance updated successfully', instance));
   } catch (error) {
-    return res.status(500).json(errorResponse(500, `Failed to update instance. ${error}. ${error.stack}`));
+    return res.status(500).json(errorResponse(500, `Failed to update instance. ${error}.`));
   }
 };
 
@@ -171,19 +171,25 @@ const deleteInstanceById = async (req, res) => {
       const participants = await Participant.findAll({
         where: { instance_id: id },
       });
-  
+
       for (let participant of participants) {
         // Delete all references in participants_mentors table
         await ParticipantsMentors.destroy({
           where: { participant_id: participant.participant_id },
           transaction: t
         });
-  
+
         // Delete the participant
         await participant.destroy({ transaction: t });
       }
 
-      await instance.destroy({ transaction: t});
+      // Delete the related records in instance_fund_sources table
+      await InstanceFundSource.destroy({
+        where: { instance_id: instance.instance_id },
+        transaction: t
+      });
+
+      await instance.destroy({ transaction: t });
       return res.status(200).json(successResponse(200, 'Instance deleted successfully', {
         instance_id: instance.instance_id,
         name: instance.name,
@@ -204,16 +210,23 @@ const getInstances = async (req, res) => {
     const include = req.query.include ? req.query.include.split(',').map(item => item.trim()) : ['all'];
 
     const allowedFilterFields = [
+      'batch',
       'type',
-      'cluster',
+      'sector',
+      'focus',
+      'status',
+      'email',
       'established_year',
       'area',
       'province',
       'city',
       'instances_beneficiaries',
       'fund_source',
-      'status',
-      'email',
+      'stable_fund_source',
+      'information_source',
+      'desain_program_training',
+      'sustainability_training',
+      'social_report_training',
       'covered_area_id',
       'covered_area_city_name',
       'covered_area_province_name',
@@ -250,12 +263,18 @@ const getInstances = async (req, res) => {
         ],
       });
 
-    } else if (filter.instance_id || filter.type || filter.cluster || filter.established_year || filter.area || filter.province || filter.city || filter.instances_beneficiaries || filter.fund_source || filter.status) {
+    } else if (filter.batch || filter.type || filter.focus || filter.sector || filter.established_year || filter.stable_fund_source || filter.information_source || filter.desain_program_training || filter.sustainability_training || filter.social_report_training || filter.area || filter.province || filter.city || filter.instances_beneficiaries || filter.fund_source || filter.status) {
       const where = {};
-
-      if (filter.instance_id) where.instance_id = filter.instance_id;
+ 
       if (filter.type) where.type = filter.type;
-      if (filter.cluster) where.cluster = filter.cluster;
+      if (filter.sector) where.sector = filter.sector;
+      if (filter.focus) where.focus = filter.focus;
+      if (filter.batch) where.batch = filter.batch;
+      if (filter.stable_fund_source) where.stable_fund_source = filter.stable_fund_source;
+      if (filter.information_source) where.information_source = filter.information_source;
+      if (filter.desain_program_training) where.desain_program_training = filter.desain_program_training;
+      if (filter.sustainability_training) where.sustainability_training = filter.sustainability_training;
+      if (filter.social_report_training) where.social_report_training = filter.social_report_training;
       if (filter.established_year) where.established_year = filter.established_year;
       if (filter.area) where.area = filter.area;
       if (filter.province) where.address_province = filter.province;
@@ -346,7 +365,7 @@ const getInstances = async (req, res) => {
       return res.status(200).json(successResponse(200, 'Instances retrieved successfully', instances));
     }
     } catch (error) {
-    return res.status(500).json(errorResponse(500, `Failed to retrieve instances. ${error}. ${error.stack}`));
+    return res.status(500).json(errorResponse(500, `Failed to retrieve instances. ${error}.`));
   }
 };
 
@@ -354,6 +373,7 @@ const getInstances = async (req, res) => {
 const buildInstanceResponseData = async (instance, include) => {
   let data =  {
     instance_id: include.includes('instance_id') || include.includes('all') ? instance.instance_id: undefined,
+    batch: include.includes('batch') || include.includes('all') ? instance.batch: undefined,
     type: include.includes('type') || include.includes('all') ? instance.type: undefined,
     name: include.includes('name') || include.includes('all') ? instance.name: undefined,
     email: (include.includes('email') || include.includes('all')) ? instance.email: undefined,
@@ -368,8 +388,18 @@ const buildInstanceResponseData = async (instance, include) => {
         city: instanceCoveredArea.City.name
       };
     }),
+    stable_fund_source: include.includes('stable_fund_source') || include.includes('all')? instance.stable_fund_source: undefined,
+    information_source: include.includes('information_source') || include.includes('all')? instance.information_source: undefined,
+    desain_program_training: include.includes('desain_program_training') || include.includes('all')? instance.desain_program_training: undefined,
+    desain_program_knowledge: include.includes('desain_program_knowledge') || include.includes('all')? instance.desain_program_knowledge: undefined,
+    sustainability_training: include.includes('sustainability_training') || include.includes('all')? instance.sustainability_training: undefined,
+    sustainability_knowledge: include.includes('sustainability_knowledge') || include.includes('all')? instance.sustainability_knowledge: undefined,
+    social_report_training: include.includes('social_report_training') || include.includes('all')? instance.social_report_training: undefined,
+    social_report_knowledge: include.includes('social_report_knowledge') || include.includes('all')? instance.social_report_knowledge: undefined,
     beneficiaries: !include.includes('beneficiaries') && !include.includes('all')? undefined: instance.InstanceBeneficiaries.map((instanceBeneficiary) => instanceBeneficiary.Beneficiary.name),
     total_beneficiaries: !include.includes('total_beneficiaries') && !include.includes('all')? undefined:  instance.total_beneficiaries,
+    expectation: !include.includes('expectation') && !include.includes('all')? undefined:  instance.expectation,
+    other_inquiries: !include.includes('other_inquiries') && !include.includes('all')? undefined:  instance.other_inquiries,
     instance_fund_source: !include.includes('instance_fund_source') && !include.includes('all')? undefined:  instance.InstanceFundSources.map((instanceFundSource) => instanceFundSource.FundSource.name),
     instance_sdg: !include.includes('instance_sdg') && !include.includes('all')? undefined:  instance.InstanceSdgs.map((instanceSdg) => instanceSdg.SustainableDevelopmentGoal.name),
     description: !include.includes('description') && !include.includes('all')? undefined:  instance.description,
@@ -381,6 +411,7 @@ const buildInstanceResponseData = async (instance, include) => {
     address_postal_code: !include.includes('address_postal_code') && !include.includes('all')? undefined:  instance.address_postal_code,
     url_company_profile: !include.includes('url_company_profile') && !include.includes('all')? undefined:  instance.url_company_profile,
     url_program_proposal: !include.includes('url_program_proposal') && !include.includes('all')? undefined:  instance.url_program_proposal,
+    url_report_program: !include.includes('url_report_program') && !include.includes('all')? undefined:  instance.url_report_program,
     social_instagram: !include.includes('social_instagram') && !include.includes('all')? undefined:  instance.social_instagram,
     social_website: !include.includes('social_website') && !include.includes('all')? undefined:  instance.social_website,
     social_tiktok: !include.includes('social_tiktok') && !include.includes('all')? undefined:  instance.social_tiktok,
