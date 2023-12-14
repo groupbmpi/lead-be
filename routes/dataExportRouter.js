@@ -51,6 +51,6 @@ const {
  *                   type: string
  *                   description: A brief message describing the error.
  */
-router.get('/api/v1/export', exportLookerCsv);
+router.get('/api/v1/export', checkAuth, checkAuthRole(RoleType.SUPERADMIN), exportLookerCsv);
 
 module.exports = router;
