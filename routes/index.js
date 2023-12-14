@@ -16,6 +16,8 @@ const instanceRouter = require('./instanceRoute');
 const dashboardSummaryRouter = require('./summaryRoute');
 const informationBannerRouter = require('./informationBannerRoute');
 
+const dataExportRouter = require('./dataExportRouter');
+
 module.exports = {
     authRouter,
     adminRouter,
@@ -29,5 +31,6 @@ module.exports = {
     cityRouter,
     provinceRouter,
     dashboardSummaryRouter,
-    informationBannerRouter
+    informationBannerRouter,
+    dataExportRouter
 };

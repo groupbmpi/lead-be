@@ -18,7 +18,8 @@ const { authRouter,
         provinceRouter,
         dashboardSummaryRouter, 
         informationBannerRouter, 
-        mentoringRouter } = require('./routes/index');
+        mentoringRouter,
+        dataExportRouter } = require('./routes/index');
 
 const { Database } = require('./config/db');
 const { errorResponse } = require('./utils/responseBuilder');
@@ -74,6 +75,8 @@ app.use(instanceRouter);
 
 app.use(dashboardSummaryRouter);
 app.use(informationBannerRouter);
+
+app.use(dataExportRouter);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
