@@ -1,0 +1,3 @@
+runtime: nodejs20
+service: backend
+entrypoint: node index.js
