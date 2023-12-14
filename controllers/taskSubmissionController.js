@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-const TaskSubmission = require('../models/taskSubmission'); 
+const TaskSubmission = require('./../models/taskSubmission'); 
 
 // Create Task Submission
 const createTaskSubmission = async (req, res) => {

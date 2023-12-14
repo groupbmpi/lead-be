@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { Database } = require('../config/db');
+const { Database } = require('./../config/db');
 const Mentor = require('./mentor');
 
 const db = Database.getInstance().getSequelizeInstance();

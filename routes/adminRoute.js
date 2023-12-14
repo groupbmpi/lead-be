@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const {checkAuth, checkAuthRole} = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+const {checkAuth, checkAuthRole} = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 const { 
     createAdmin, 
@@ -10,7 +10,7 @@ const {
     getAdminById, 
     updateAdmin, 
     deleteAdmin, 
-} = require('../controllers/adminController');
+} = require('./../controllers/adminController');
 
 /**
  * @swagger

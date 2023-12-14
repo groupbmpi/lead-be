@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { errorResponse, successResponse } = require('../utils/responseBuilder');
+const { errorResponse, successResponse } = require('./../utils/responseBuilder');
 require('dotenv').config();
 
-const ParticipantMentor = require('../models/participantsmentors');
-const Mentor = require('../models/mentor');
-const Participant = require('../models/participant');
+const ParticipantMentor = require('./../models/participantsmentors');
+const Mentor = require('./../models/mentor');
+const Participant = require('./../models/participant');
 
 const addNew = async (req, res) => {
     try {

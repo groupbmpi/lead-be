@@ -1,20 +1,20 @@
 // Import models
-const Instance = require('../models/instance');
-const InstanceCoveredArea = require('../models/instancecoveredarea');
-const Participant = require('../models/participant');
-const InstanceFundSource = require('../models/instancefundsource');
-const InstanceSDG = require('../models/instancesdg');
-const Beneficiary = require('../models/beneficiary');
-const InstanceBeneficiary = require('../models/instancebeneficiary');
-const FundSource = require('../models/fundsource');
-const Sdg = require('../models/sustainabledevelopmentgoal');
-const { Database } = require('../config/db');
-const { errorResponse, successResponse } = require('../utils/responseBuilder');
-const City = require('../models/city');
-const Province = require('../models/province');
+const Instance = require('./../models/instance');
+const InstanceCoveredArea = require('./../models/instancecoveredarea');
+const Participant = require('./../models/participant');
+const InstanceFundSource = require('./../models/instancefundsource');
+const InstanceSDG = require('./../models/instancesdg');
+const Beneficiary = require('./../models/beneficiary');
+const InstanceBeneficiary = require('./../models/instancebeneficiary');
+const FundSource = require('./../models/fundsource');
+const Sdg = require('./../models/sustainabledevelopmentgoal');
+const { Database } = require('./../config/db');
+const { errorResponse, successResponse } = require('./../utils/responseBuilder');
+const City = require('./../models/city');
+const Province = require('./../models/province');
 const { Op } = require('sequelize');
 const db = Database.getInstance().getSequelizeInstance();
-const transporter = require('../config/mailer');
+const transporter = require('./../config/mailer');
 
 // 1.1 Calon peserta dapat mendaftarkan diri dengan mengisi pertanyaan yang diajukan tanpa harus signup/signin akun 
 const register = async (req, res) => {

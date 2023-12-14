@@ -1,5 +1,5 @@
-const Task = require('../models/task');
-const Mentor = require('../models/mentor'); // Import the Mentor model
+const Task = require('./../models/task');
+const Mentor = require('./../models/mentor'); // Import the Mentor model
 
 const createTask = async (req, res) => {
     try {

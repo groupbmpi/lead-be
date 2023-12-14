@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const { register, sendRegistrationConfirmation } = require('../controllers/registrationController');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
+const { register, sendRegistrationConfirmation } = require('./../controllers/registrationController');
 
-const RoleType = require('../utils/roleType');
+const RoleType = require('./../utils/roleType');
 
 /**
  * @swagger

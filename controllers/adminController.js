@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const Admin = require('../models/admin');
-const { successResponse, errorResponse } = require('../utils/responseBuilder');
+const Admin = require('./../models/admin');
+const { successResponse, errorResponse } = require('./../utils/responseBuilder');
 
 const createAdmin = async (req, res) => {
     try {

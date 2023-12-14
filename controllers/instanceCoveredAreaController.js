@@ -1,12 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { successResponse, errorResponse } = require('../utils/responseBuilder');
+const { successResponse, errorResponse } = require('./../utils/responseBuilder');
 
-const Instance = require('../models/instance');
-const City = require('../models/city');
+const Instance = require('./../models/instance');
+const City = require('./../models/city');
 
-const InstanceCoveredArea = require("../models/instancecoveredarea");
+const InstanceCoveredArea = require('./../models/instancecoveredarea');
 
 
 // Create a new instance covered area

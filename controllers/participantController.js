@@ -1,14 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { successResponse, errorResponse } = require('../utils/responseBuilder');
+const { successResponse, errorResponse } = require('./../utils/responseBuilder');
 
-const Participant = require('../models/participant');
-const Mentor = require('../models/mentor');
-const ParticipantsMentors = require('../models/participantsmentors');
-const Instance = require('../models/instance');
+const Participant = require('./../models/participant');
+const Mentor = require('./../models/mentor');
+const ParticipantsMentors = require('./../models/participantsmentors');
+const Instance = require('./../models/instance');
 
-const { Database } = require('../config/db');
+const { Database } = require('./../config/db');
 const db = Database.getInstance().getSequelizeInstance();
 
 // Create a participant

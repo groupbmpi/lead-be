@@ -1,6 +1,6 @@
-const City = require('../models/city');
-const Province = require('../models/province');
-const { successResponse, errorResponse } = require('../utils/responseBuilder');
+const City = require('./../models/city');
+const Province = require('./../models/province');
+const { successResponse, errorResponse } = require('./../utils/responseBuilder');
 
 
 // Get all cities

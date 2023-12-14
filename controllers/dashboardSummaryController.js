@@ -1,16 +1,16 @@
 
 // Import model
-const Instance = require('../models/instance');
-const Participant = require('../models/participant');
-const City = require('../models/city');
-const Province = require('../models/province');
-const InstanceBeneficiary = require('../models/instancebeneficiary');
-const Beneficiary = require('../models/beneficiary');
-const InstanceCoveredArea = require('../models/instancecoveredarea');
-const FundSource = require('../models/fundsource');
+const Instance = require('./../models/instance');
+const Participant = require('./../models/participant');
+const City = require('./../models/city');
+const Province = require('./../models/province');
+const InstanceBeneficiary = require('./../models/instancebeneficiary');
+const Beneficiary = require('./../models/beneficiary');
+const InstanceCoveredArea = require('./../models/instancecoveredarea');
+const FundSource = require('./../models/fundsource');
 
-const { errorResponse, successResponse } = require('../utils/responseBuilder');
-const InstanceFundSource = require('../models/instancefundsource');
+const { errorResponse, successResponse } = require('./../utils/responseBuilder');
+const InstanceFundSource = require('./../models/instancefundsource');
 
 const getDashboardSummary = async (req, res) => {
   try {
@@ -429,16 +429,16 @@ const getDashboardSummary = async (req, res) => {
             summary.address_regency[city] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };
           }
           summary.address_regency[city].total += 1;
-          console.log(city);
+          // console.log(city);
           if(!totalOnlyParam && !summary.address_regency[city].instances.includes(instance.name)) 
             summary.address_regency[city].instances.push(instance.name);
-          console.log(summary.address_regency[city]);
+          // console.log(summary.address_regency[city]);
         }
       }
 
       // instances_beneficiaries
       if (summary.hasOwnProperty('beneficiaries')) {
-        console.log(instance.InstanceBeneficiaries);
+        // console.log(instance.InstanceBeneficiaries);
         instance.InstanceBeneficiaries.forEach((instance_beneficiary) => {
           if (!summary.beneficiaries[instance_beneficiary.Beneficiary.name]) {
             summary.beneficiaries[instance_beneficiary.Beneficiary.name] = totalOnlyParam ? { total: 0 } : { total: 0, instances: [] };

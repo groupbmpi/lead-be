@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { errorResponse } = require('../utils/responseBuilder');
+const { errorResponse } = require('./../utils/responseBuilder');
 
 const checkAuth = (req, res, next) => {
     try {

@@ -7,9 +7,9 @@ const {
     updateParticipant,
     deleteParticipant,
     getParticipant
-  } = require('../controllers/participantController');
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+  } = require('./../controllers/participantController');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 /**
  * @swagger

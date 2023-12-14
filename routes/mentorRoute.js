@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const {checkAuth, checkAuthRole} = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+const {checkAuth, checkAuthRole} = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 const { 
     addNew,
@@ -11,7 +11,7 @@ const {
     getMentorById,
     updateMentor,
     deleteMentor
-} = require('../controllers/mentorController');
+} = require('./../controllers/mentorController');
 
 /**
  * @swagger

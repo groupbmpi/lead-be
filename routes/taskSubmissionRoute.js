@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 const {
   createTaskSubmission,
@@ -13,7 +13,7 @@ const {
   getTaskSubmissionByTaskId,
   getTaskSubmissionByParticipantId,
   getTaskSubmissionByCombination,
-} = require('../controllers/taskSubmissionController');
+} = require('./../controllers/taskSubmissionController');
 
 /**
  * @swagger

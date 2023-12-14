@@ -1,19 +1,19 @@
-const Beneficiary = require('../models/beneficiary');
-const City = require('../models/city');
-const Instance = require('../models/instance');
-const Province = require('../models/province');
-const FundSources = require('../models/fundsource');
-const InstanceFundSource = require('../models/instancefundsource');
-const InstanceCoveredArea = require('../models/instancecoveredarea');
-const InstanceBeneficiary = require('../models/instancebeneficiary');
-const InstanceSdg = require('../models/instancesdg');
-const Sdg = require('../models/sustainabledevelopmentgoal');
-const Participant = require('../models/participant');
-const ParticipantsMentors = require('../models/participantsmentors');
+const Beneficiary = require('./../models/beneficiary');
+const City = require('./../models/city');
+const Instance = require('./../models/instance');
+const Province = require('./../models/province');
+const FundSources = require('./../models/fundsource');
+const InstanceFundSource = require('./../models/instancefundsource');
+const InstanceCoveredArea = require('./../models/instancecoveredarea');
+const InstanceBeneficiary = require('./../models/instancebeneficiary');
+const InstanceSdg = require('./../models/instancesdg');
+const Sdg = require('./../models/sustainabledevelopmentgoal');
+const Participant = require('./../models/participant');
+const ParticipantsMentors = require('./../models/participantsmentors');
 
-const { Database } = require('../config/db');
+const { Database } = require('./../config/db');
 const db = Database.getInstance().getSequelizeInstance();
-const { errorResponse, successResponse } = require('../utils/responseBuilder');
+const { errorResponse, successResponse } = require('./../utils/responseBuilder');
 
 // const getInstancesByCoveredAreaId = async (req, res) => {
 //   try {

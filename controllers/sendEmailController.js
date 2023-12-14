@@ -1,6 +1,6 @@
 // Import nodemailer
 const nodemailer = require('nodemailer');
-const { successResponse, errorResponse } = require('../utils/responseBuilder');
+const { successResponse, errorResponse } = require('./../utils/responseBuilder');
 
 // 1.2 Peserta akan mendapatkan notifikasi dari email terkait jawaban yang telah disubmit pada form pendaftaran yang telah diisi
 const sendRegistrationConfirmation = (req, res) => {

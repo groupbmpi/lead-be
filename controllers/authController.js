@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const Mentor = require('../models/mentor');
-const Participant = require('../models/participant');
-const Admin = require('../models/admin');
-const { errorResponse, successResponse } = require('../utils/responseBuilder');
+const Mentor = require('./../models/mentor');
+const Participant = require('./../models/participant');
+const Admin = require('./../models/admin');
+const { errorResponse, successResponse } = require('./../utils/responseBuilder');
 require('dotenv').config();
 
 // 2.1.b Mentor dapat sign up / sign in dengan memasukkan email yang sudah terdaftar oleh admin sebagai username dan ID Mentor sebagai password

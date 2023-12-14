@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 const {
   createTask,
@@ -10,7 +10,7 @@ const {
   getTaskById,
   updateTask,
   deleteTask,
-} = require('../controllers/taskController');
+} = require('./../controllers/taskController');
 
 /**
  * @swagger

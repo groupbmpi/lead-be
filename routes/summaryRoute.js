@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { getDashboardSummary } = require('../controllers/dashboardSummaryController');
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
-const RoleType = require('../utils/roleType');
+const { getDashboardSummary } = require('./../controllers/dashboardSummaryController');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
+const RoleType = require('./../utils/roleType');
 
 /**
  * @swagger

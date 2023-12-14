@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const { Database } = require('../config/db');
+const { Database } = require('./../config/db');
 
 const db = Database.getInstance().getSequelizeInstance();
 

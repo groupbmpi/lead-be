@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { checkAuth, checkAuthRole } = require('../middleware/checkauth');
+const { checkAuth, checkAuthRole } = require('./../middleware/checkauth');
 
-const RoleType = require('../utils/roleType');
+const RoleType = require('./../utils/roleType');
 
 // Import controllers
 const {
@@ -11,7 +11,7 @@ const {
     // createProvince,
     // updateProvinceById,
     // deleteProvinceById
-} = require('../controllers/provinceController');
+} = require('./../controllers/provinceController');
 
 /**
  * @swagger

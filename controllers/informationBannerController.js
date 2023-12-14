@@ -1,6 +1,6 @@
 
-const InformationBanner = require('../models/informationBanner');
-const transporter = require('../config/mailer');
+const InformationBanner = require('./../models/informationBanner');
+const transporter = require('./../config/mailer');
 
 const createInformationBanner = async (req, res) => {
     try {

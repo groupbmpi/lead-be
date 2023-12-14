@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { loginAdmin, login, logout, me } = require('../controllers/authController');
+const { loginAdmin, login, logout, me } = require('./../controllers/authController');
 
 /**
  * @swagger
