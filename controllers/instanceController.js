@@ -6,7 +6,7 @@ const FundSources = require('./../models/fundsource');
 const InstanceFundSource = require('./../models/instancefundsource');
 const InstanceCoveredArea = require('./../models/instancecoveredarea');
 const InstanceBeneficiary = require('./../models/instancebeneficiary');
-const InstanceSdg = require('./../models/instancesdg');
+const InstanceSDG = require('./../models/instancesdg');
 const Sdg = require('./../models/sustainabledevelopmentgoal');
 const Participant = require('./../models/participant');
 const ParticipantsMentors = require('./../models/participantsmentors');
@@ -173,32 +173,32 @@ const updateInstanceById = async (req, res) => {
                       const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: city.city_id, instance_id: instance.instance_id }, { transaction: t });
                   }
                 
-                  instance_covered_area.push({
-                      city: cities[i],
-                      province: provinceName
-                  });
+                  // instance_covered_area.push({
+                  //     city: cities[i],
+                  //     province: provinceName
+                  // });
               }
           }
         
-          const targetBeneficiariesId = [];
+          // const targetBeneficiariesId = [];
         
           if(req.body.beneficiaries){
               const beneficiaries = req.body.beneficiaries;
-              for (let i = 0; i < beneficiaries.length; i++) {
-                  const beneficiaryName = beneficiaries[i];  // list of beneficiary name
-                  const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
+              // for (let i = 0; i < beneficiaries.length; i++) {
+              //     const beneficiaryName = beneficiaries[i];  // list of beneficiary name
+              //     const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
                 
-                  if (!existingBeneficiary) {
-                      const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
-                      targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
-                  } else {
-                      targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
-                  }
-              }
+              //     if (!existingBeneficiary) {
+              //         const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
+              //         targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
+              //     } else {
+              //         targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
+              //     }
+              // }
             
               // Add beneficiary to instance
-              for(let i = 0; i < targetBeneficiariesId.length; i++) {
-                  const beneficiaryId = targetBeneficiariesId[i];
+              for(let i = 0; i < beneficiaries.length; i++) {
+                  const beneficiaryId = beneficiaries[i];
                   const existingInstanceBeneficiary = await InstanceBeneficiary.findOne({ where: { beneficiary_id: beneficiaryId, instance_id: instance.instance_id } });
                 
                   if (!existingInstanceBeneficiary) {
@@ -211,24 +211,24 @@ const updateInstanceById = async (req, res) => {
           // ADD instance fund source
           // Create fund source if it doesn't exist
           if(req.body.fund_sources){
-              instanceFundSources = req.body.fund_sources; // list of fund source name
-              const targetFundSourcesId = [];
+              instanceFundSourceIds = req.body.fund_sources; // list of fund source id
+              // const targetFundSourcesId = [];
               
-              for (let i = 0; i < instanceFundSources.length; i++) {
-                  const fundSourceName = instanceFundSources[i];
-                  const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
+              // for (let i = 0; i < instanceFundSourceIds.length; i++) {
+              //     const fundSourceName = instanceFundSourceIds[i];
+              //     const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
                 
-                  if (!existingFundSource) {
-                      const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
-                      targetFundSourcesId.push(newFundSource.fund_source_id);
-                  } else {
-                      targetFundSourcesId.push(existingFundSource.fund_source_id);
-                  }
-              }
+              //     if (!existingFundSource) {
+              //         const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
+              //         targetFundSourcesId.push(newFundSource.fund_source_id);
+              //     } else {
+              //         targetFundSourcesId.push(existingFundSource.fund_source_id);
+              //     }
+              // }
             
               // Add fund source to instance
-              for(let i = 0; i < targetFundSourcesId.length; i++) {
-                  const fundSourceId = targetFundSourcesId[i];
+              for(let i = 0; i < instanceFundSourceIds.length; i++) {
+                  const fundSourceId = instanceFundSourceIds[i];
                   const existingInstanceFundSource = await InstanceFundSource.findOne({ where: { fund_source_id: fundSourceId, instance_id: instance.instance_id } });
                 
                   if (!existingInstanceFundSource) {
@@ -240,17 +240,14 @@ const updateInstanceById = async (req, res) => {
           // ADD SDG to instance
           // Add instance SDG if it doesn't exist
           if(req.body.sdgs){
-              const sdgsName = req.body.sdgs; // list of sdg name
-              instanceSdg = sdgsName;
+              const sdgsIds = req.body.sdgs; // list of sdg name
+              // instanceSdg = sdgsIds;
             
-              for (let i = 0; i < sdgsName.length; i++) {
-                  const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
-                  if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsName[i]} does not exist.`));
-                  const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
-                
-                  if (!existingInstanceSDG) {
-                      const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdg.sdg_id, instance_id: instance.instance_id }, { transaction: t });
-                  }
+              const deleteExistingInstanceSDG = await InstanceSDG.destroy({ where: { instance_id: instance.instance_id } });
+              for (let i = 0; i < sdgsIds.length; i++) {
+                  const sdgId = sdgsIds[i];
+                  // if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsIds[i]} does not exist.`));
+                  const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdgId, instance_id: instance.instance_id }, { transaction: t });
               }
           }
         
