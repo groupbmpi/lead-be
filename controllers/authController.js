@@ -45,7 +45,12 @@ const loginAdmin = async (req, res) => {
         const token = jwt.sign(payload, process.env.JWT_SECRET);
         
         // Set the token in a cookie
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, 
+        { 
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true
+        });
         
         res.json(successResponse('Login successful', { token, user: {
             id: user.admin_id,
@@ -98,14 +103,19 @@ const login = async (req, res) => {
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
         };
 
-        if(mentor.mentor_id) {
+        if(mentor) {
             payload.category = mentor.category;
         }
 
         const token = jwt.sign(payload, process.env.JWT_SECRET);
 
         // Set the token in a cookie
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, 
+        { 
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true
+        });
 
         res.json(successResponse( 200, 'Login successful', { token, user: {
             id: user.mentor_id || user.participant_id || user.admin_id,

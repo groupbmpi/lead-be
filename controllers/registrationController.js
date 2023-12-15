@@ -131,98 +131,98 @@ const register = async (req, res) => {
             if (existingInstance) instance = existingInstance;
             else instance = await Instance.create(newInstanceData, { transaction: t })
 
-         // Create instance covered area
-            // Get the instance covered area information from the request body
-            const cities = req.body.covered_area_list;  // list of city name
+        //  // Create instance covered area
+        //     // Get the instance covered area information from the request body
+        //     const cities = req.body.covered_area_list;  // list of city name
 
-            for (let i = 0; i < cities.length; i++) {
-                const city = (await City.findOne({ where: { name: cities[i] }, include: Province }));
-                if(!city) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
+        //     for (let i = 0; i < cities.length; i++) {
+        //         const city = (await City.findOne({ where: { name: cities[i] }, include: Province }));
+        //         if(!city) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
                 
-                // const city = await City.findOne({ where: { city_id: cityId }, include: Province });
-                // if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
+        //         // const city = await City.findOne({ where: { city_id: cityId }, include: Province });
+        //         // if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
                 
 
-                const provinceName = city.Province.name;
+        //         const provinceName = city.Province.name;
 
-                const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: city.city_id, instance_id: instance.instance_id } });
+        //         const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: city.city_id, instance_id: instance.instance_id } });
 
-                if (!existingInstanceCoveredArea) {
-                    const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: city.city_id, instance_id: instance.instance_id }, { transaction: t });
-                }
+        //         if (!existingInstanceCoveredArea) {
+        //             const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: city.city_id, instance_id: instance.instance_id }, { transaction: t });
+        //         }
 
-                instance_covered_area.push({
-                    city: cities[i],
-                    province: provinceName
-                });
-            }
+        //         instance_covered_area.push({
+        //             city: cities[i],
+        //             province: provinceName
+        //         });
+        //     }
 
-            const targetBeneficiariesId = [];
+        //     const targetBeneficiariesId = [];
 
-            for (let i = 0; i < beneficiaries.length; i++) {
-                const beneficiaryName = beneficiaries[i];  // list of beneficiary name
-                const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
+        //     for (let i = 0; i < beneficiaries.length; i++) {
+        //         const beneficiaryName = beneficiaries[i];  // list of beneficiary name
+        //         const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
 
-                if (!existingBeneficiary) {
-                    const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
-                    targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
-                } else {
-                    targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
-                }
-            }
+        //         if (!existingBeneficiary) {
+        //             const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
+        //             targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
+        //         } else {
+        //             targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
+        //         }
+        //     }
 
-            // Add beneficiary to instance
-            for(let i = 0; i < targetBeneficiariesId.length; i++) {
-                const beneficiaryId = targetBeneficiariesId[i];
-                const existingInstanceBeneficiary = await InstanceBeneficiary.findOne({ where: { beneficiary_id: beneficiaryId, instance_id: instance.instance_id } });
+        //     // Add beneficiary to instance
+        //     for(let i = 0; i < targetBeneficiariesId.length; i++) {
+        //         const beneficiaryId = targetBeneficiariesId[i];
+        //         const existingInstanceBeneficiary = await InstanceBeneficiary.findOne({ where: { beneficiary_id: beneficiaryId, instance_id: instance.instance_id } });
 
-                if (!existingInstanceBeneficiary) {
-                    const newInstanceBeneficiary = await InstanceBeneficiary.create({ beneficiary_id: beneficiaryId, instance_id: instance.instance_id }, { transaction: t });
-                }
-            }
+        //         if (!existingInstanceBeneficiary) {
+        //             const newInstanceBeneficiary = await InstanceBeneficiary.create({ beneficiary_id: beneficiaryId, instance_id: instance.instance_id }, { transaction: t });
+        //         }
+        //     }
 
 
-         // ADD instance fund source
-            // Create fund source if it doesn't exist
-            instanceFundSources = req.body.fund_sources; // list of fund source name
-            const targetFundSourcesId = [];
+        //  // ADD instance fund source
+        //     // Create fund source if it doesn't exist
+        //     instanceFundSources = req.body.fund_sources; // list of fund source name
+        //     const targetFundSourcesId = [];
             
-            for (let i = 0; i < instanceFundSources.length; i++) {
-                const fundSourceName = instanceFundSources[i];
-                const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
+        //     for (let i = 0; i < instanceFundSources.length; i++) {
+        //         const fundSourceName = instanceFundSources[i];
+        //         const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
 
-                if (!existingFundSource) {
-                    const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
-                    targetFundSourcesId.push(newFundSource.fund_source_id);
-                } else {
-                    targetFundSourcesId.push(existingFundSource.fund_source_id);
-                }
-            }
+        //         if (!existingFundSource) {
+        //             const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
+        //             targetFundSourcesId.push(newFundSource.fund_source_id);
+        //         } else {
+        //             targetFundSourcesId.push(existingFundSource.fund_source_id);
+        //         }
+        //     }
 
-            // Add fund source to instance
-            for(let i = 0; i < targetFundSourcesId.length; i++) {
-                const fundSourceId = targetFundSourcesId[i];
-                const existingInstanceFundSource = await InstanceFundSource.findOne({ where: { fund_source_id: fundSourceId, instance_id: instance.instance_id } });
+        //     // Add fund source to instance
+        //     for(let i = 0; i < targetFundSourcesId.length; i++) {
+        //         const fundSourceId = targetFundSourcesId[i];
+        //         const existingInstanceFundSource = await InstanceFundSource.findOne({ where: { fund_source_id: fundSourceId, instance_id: instance.instance_id } });
 
-                if (!existingInstanceFundSource) {
-                    InstanceFundSource.create({ fund_source_id: fundSourceId, instance_id: instance.instance_id }, { transaction: t });
-                }
-            }
+        //         if (!existingInstanceFundSource) {
+        //             InstanceFundSource.create({ fund_source_id: fundSourceId, instance_id: instance.instance_id }, { transaction: t });
+        //         }
+        //     }
 
-         // ADD SDG to instance
-            // Add instance SDG if it doesn't exist
-            const sdgsName = req.body.sdgs; // list of sdg name
-            instanceSdg = sdgsName;
+        //  // ADD SDG to instance
+        //     // Add instance SDG if it doesn't exist
+        //     const sdgsName = req.body.sdgs; // list of sdg name
+        //     instanceSdg = sdgsName;
 
-            for (let i = 0; i < sdgsName.length; i++) {
-                const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
-                if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsName[i]} does not exist.`));
-                const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
+        //     for (let i = 0; i < sdgsName.length; i++) {
+        //         const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
+        //         if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsName[i]} does not exist.`));
+        //         const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
 
-                if (!existingInstanceSDG) {
-                    const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdg.sdg_id, instance_id: instance.instance_id }, { transaction: t });
-                }
-            }
+        //         if (!existingInstanceSDG) {
+        //             const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdg.sdg_id, instance_id: instance.instance_id }, { transaction: t });
+        //         }
+        //     }
 
         // 5. ADD participants
             // Create participants

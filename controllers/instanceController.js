@@ -131,28 +131,173 @@ const updateInstanceById = async (req, res) => {
   try {
       const { id } = req.params;
 
-      const instance = await Instance.findByPk(id);
-      if (!instance) {
-        return res.status(404).json(errorResponse(404, 'Instance not found'));
-      }
-
-      const participants = await Participant.findAll({
-        where: { instance_id: id },
-      });
-
-      if(!participants)
-        return res.status(404).json(errorResponse(404, 'Participants not found'));
-
-      const authorizedAccess = req.userData.role === 'SUPERADMIN'? true : participants.some((participant) => {
-        return participant.participant_id === req.userData.id && req.userData.role === 'PARTICIPANT';
-      });
+      const result = await db.transaction(async (t) => {
+        const instance = await Instance.findByPk(id);
+        if (!instance) {
+          return res.status(404).json(errorResponse(404, 'Instance not found'));
+        }
       
-      if (!authorizedAccess) {
-        return res.status(403).json(errorResponse(403, 'Forbidden access'));
-      }
-
-      const result = await instance.update(req.body);
-      if(result) return res.status(200).json(successResponse(200, 'Instance updated successfully', instance));
+        const participants = await Participant.findAll({
+          where: { instance_id: id },
+        });
+      
+        if(!participants)
+          return res.status(404).json(errorResponse(404, 'Participants not found'));
+      
+        const authorizedAccess = req.userData.role === 'SUPERADMIN'? true : participants.some((participant) => {
+          return participant.participant_id === req.userData.id && req.userData.role === 'PARTICIPANT';
+        });
+        
+        if (!authorizedAccess) {
+          return res.status(403).json(errorResponse(403, 'Forbidden access'));
+        }
+      
+        // Create instance covered area
+          // Get the instance covered area information from the request body
+          if(req.body.covered_area_list){
+              const cities = req.body.covered_area_list;  // list of city name
+            
+              for (let i = 0; i < cities.length; i++) {
+                  const city = (await City.findOne({ where: { name: cities[i] }, include: Province }));
+                  if(!city) return res.status(400).json(errorResponse(400, `City with name ${cities[i]} does not exist.`));
+                
+                  // const city = await City.findOne({ where: { city_id: cityId }, include: Province });
+                  // if (!city) return res.status(400).json(errorResponse(400, `City with city_id ${cityId} does not exist.`));
+                
+                
+                  const provinceName = city.Province.name;
+                
+                  const existingInstanceCoveredArea = await InstanceCoveredArea.findOne({ where: { city_id: city.city_id, instance_id: instance.instance_id } });
+                
+                  if (!existingInstanceCoveredArea) {
+                      const newInstanceCoveredArea = await InstanceCoveredArea.create({ city_id: city.city_id, instance_id: instance.instance_id }, { transaction: t });
+                  }
+                
+                  instance_covered_area.push({
+                      city: cities[i],
+                      province: provinceName
+                  });
+              }
+          }
+        
+          const targetBeneficiariesId = [];
+        
+          if(req.body.beneficiaries){
+              const beneficiaries = req.body.beneficiaries;
+              for (let i = 0; i < beneficiaries.length; i++) {
+                  const beneficiaryName = beneficiaries[i];  // list of beneficiary name
+                  const existingBeneficiary = await Beneficiary.findOne({ where: { name: beneficiaryName } });
+                
+                  if (!existingBeneficiary) {
+                      const newBeneficiary = await Beneficiary.create({ name: beneficiaryName }, { transaction: t });
+                      targetBeneficiariesId.push(newBeneficiary.beneficiary_id);
+                  } else {
+                      targetBeneficiariesId.push(existingBeneficiary.beneficiary_id);
+                  }
+              }
+            
+              // Add beneficiary to instance
+              for(let i = 0; i < targetBeneficiariesId.length; i++) {
+                  const beneficiaryId = targetBeneficiariesId[i];
+                  const existingInstanceBeneficiary = await InstanceBeneficiary.findOne({ where: { beneficiary_id: beneficiaryId, instance_id: instance.instance_id } });
+                
+                  if (!existingInstanceBeneficiary) {
+                      const newInstanceBeneficiary = await InstanceBeneficiary.create({ beneficiary_id: beneficiaryId, instance_id: instance.instance_id }, { transaction: t });
+                  }
+              }
+          }
+        
+        
+          // ADD instance fund source
+          // Create fund source if it doesn't exist
+          if(req.body.fund_sources){
+              instanceFundSources = req.body.fund_sources; // list of fund source name
+              const targetFundSourcesId = [];
+              
+              for (let i = 0; i < instanceFundSources.length; i++) {
+                  const fundSourceName = instanceFundSources[i];
+                  const existingFundSource = await FundSource.findOne({ where: { name: fundSourceName } });
+                
+                  if (!existingFundSource) {
+                      const newFundSource = await FundSource.create({ name: fundSourceName }, { transaction: t });
+                      targetFundSourcesId.push(newFundSource.fund_source_id);
+                  } else {
+                      targetFundSourcesId.push(existingFundSource.fund_source_id);
+                  }
+              }
+            
+              // Add fund source to instance
+              for(let i = 0; i < targetFundSourcesId.length; i++) {
+                  const fundSourceId = targetFundSourcesId[i];
+                  const existingInstanceFundSource = await InstanceFundSource.findOne({ where: { fund_source_id: fundSourceId, instance_id: instance.instance_id } });
+                
+                  if (!existingInstanceFundSource) {
+                      InstanceFundSource.create({ fund_source_id: fundSourceId, instance_id: instance.instance_id }, { transaction: t });
+                  }
+              }
+          }
+        
+          // ADD SDG to instance
+          // Add instance SDG if it doesn't exist
+          if(req.body.sdgs){
+              const sdgsName = req.body.sdgs; // list of sdg name
+              instanceSdg = sdgsName;
+            
+              for (let i = 0; i < sdgsName.length; i++) {
+                  const sdg = await Sdg.findOne({ where: { name: sdgsName[i] } });
+                  if (!sdg) return res.status(400).json(errorResponse(400, `SDG with name ${sdgsName[i]} does not exist.`));
+                  const existingInstanceSDG = await InstanceSDG.findOne({ where: { sdg_id: sdg.sdg_id, instance_id: instance.instance_id } });
+                
+                  if (!existingInstanceSDG) {
+                      const newInstanceSDG = await InstanceSDG.create({ sdg_id: sdg.sdg_id, instance_id: instance.instance_id }, { transaction: t });
+                  }
+              }
+          }
+        
+          const instanceUpdateData = {
+              type: req.body.type,
+              name: req.body.name,
+              email: req.body.email,
+              batch: req.body.batch,
+              sector: req.body.sector,
+              focus: req.body.focus,
+              established_month: req.body.established_month,
+              established_year: req.body.established_year,
+              area: req.body.area,
+              beneficiaries: req.body.beneficiaries,
+              total_beneficiaries: req.body.total_beneficiaries,
+              description: req.body.description,
+              url_company_profile: req.body.url_company_profile,
+              url_program_proposal: req.body.url_program_proposal,
+              status: req.body.status,
+              stable_fund_source: req.body.stable_fund_source,
+              information_source: req.body.information_source,
+              desain_program_training: req.body.desain_program_training,
+              desain_program_knowledge: req.body.desain_program_knowledge,
+              sustainability_training: req.body.sustainability_training,
+              sustainability_knowledge: req.body.sustainability_knowledge,
+              social_report_training: req.body.social_report_training,
+              social_report_knowledge: req.body.social_report_knowledge,
+              url_program_report: req.body.url_program_report,
+              expectation: req.body.expectation,
+              other_inquiries: req.body.other_inquiries,
+              social_instagram: req.body.social_instagram,
+              social_website: req.body.social_website,
+              social_tiktok: req.body.social_tiktok,
+              social_youtube: req.body.social_youtube,
+              address_street: req.body.address_street,
+              address_village: req.body.address_village,
+              address_district: req.body.address_district,
+              // address_city_id: req.body.address_city_id,
+              // address_province_id: req.body.address_province_id,
+              address_regency: req.body.address_regency,
+              address_province: req.body.address_province,
+              address_postal_code: req.body.address_postal_code,
+          };
+        
+        const result = await instance.update(instanceUpdateData,{transaction: t});
+        if(result) return res.status(200).json(successResponse(200, 'Instance updated successfully', instance));
+      })
   } catch (error) {
     return res.status(500).json(errorResponse(500, `Failed to update instance. ${error}.`));
   }
