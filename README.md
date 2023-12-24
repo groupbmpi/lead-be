@@ -1,26 +1,24 @@
-## Branch: mentoring
-- adds crud to mentoring
-- adds bulk search by fk to mentoring
+## Getting Started
 
-## Modifications
-- modify mentoring model (./models/mentoring.js)
-- add routing for mentoring (./routes/mentoringRoute.js)
-- add CRUD endpoint for mentoring model (./controllers/mentoringController.js)
+First, install the required dependencies:
+```bash
+npm i
+```
+(Node JS version used: 20)
 
-## Model Detail
-- mentoring_id (PK) (INT) (NOT NULLABLE) (AUTO INCREMENT)
-- mentor_id (FK:Mentor) (INT) (NOT NULLABLE)
-- participant_id (FK:Participant) (INT) (NOT NULLABLE)
-- title (VARCHAR) (NOT NULLABLE)
-- description (TEXT) (NOT NULLABLE)
-- datetime_start (DATETIME)
-- datetime_finish (DATETIME)
+To run the server:
+```bash
+npm run dev
+```
 
-## Endpoint Details
-- GET `/api/v1/mentoring` (ADMINS, MENTOR) - getAllMentoring
-- GET `/api/v1/mentoring/:id` (ALL) - getMentoringById
-- PUT `/api/v1/mentoring/:id` (ADMINS, MENTOR) - updateMentoring
-- DELETE `/api/v1/mentoring/:id` (ADMINS, MENTOR) - deleteMentoring
-- GET `/api/v1/mentoring/mentor/:id` (ALL) - getMentoringByMentorId
-- GET `/api/v1/mentoring/participant/:id` (ALL) - getMentoringByParticipantId
-- GET `/api/v1/mentoring/:participantId/:mentorId` (ALL) - getMentoringByCombination
+Open [http://localhost:3000](http://localhost:5000)
+
+Check the deployed project on https://backend-dot-project-81504.et.r.appspot.com/
+
+Check the swagger documentation on [https://backend-dot-project-81504.et.r.appspot.com/api-docs](https://backend-dot-project-81504.et.r.appspot.com/api-docs/)
+
+To host on App Engine, configure .env files according to .env.example and run
+```bash
+gcloud init
+gcloud app deploy
+```
